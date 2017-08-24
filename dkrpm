@@ -1,0 +1,270 @@
+#!/usr/bin/env bash
+
+###############################################################################
+
+APP="dkrpm"
+VER="1.1.0"
+
+###############################################################################
+
+NORM=0
+BOLD=1
+UNLN=4
+RED=31
+GREEN=32
+BROWN=33
+BLUE=34
+MAG=35
+CYAN=36
+GREY=37
+
+CL_NORM="\e[${NORM}m"
+CL_BOLD="\e[${BOLD}m"
+CL_UNLN="\e[${UNLN}m"
+CL_RED="\e[${RED}m"
+CL_GREEN="\e[${GREEN}m"
+CL_BROWN="\e[${BROWN}m"
+CL_BLUE="\e[${BLUE}m"
+CL_MAG="\e[${MAG}m"
+CL_CYAN="\e[${CYAN}m"
+CL_GREY="\e[${GREY}m"
+CL_BL_RED="\e[${RED};1m"
+CL_BL_GREEN="\e[${GREEN};1m"
+CL_BL_BROWN="\e[${BROWN};1m"
+CL_BL_BLUE="\e[${BLUE};1m"
+CL_BL_MAG="\e[${MAG};1m"
+CL_BL_CYAN="\e[${CYAN};1m"
+CL_BL_GREY="\e[${GREY};1m"
+CL_UL_RED="\e[${RED};4m"
+CL_UL_GREEN="\e[${GREEN};4m"
+CL_UL_BROWN="\e[${BROWN};4m"
+CL_UL_BLUE="\e[${BLUE};4m"
+CL_UL_MAG="\e[${MAG};4m"
+CL_UL_CYAN="\e[${CYAN};4m"
+CL_UL_GREY="\e[${GREY};4m"
+CL_BG_RED="\e[${RED};7m"
+CL_BG_GREEN="\e[${GREEN};7m"
+CL_BG_BROWN="\e[${BROWN};7m"
+CL_BG_BLUE="\e[${BLUE};7m"
+CL_BG_MAG="\e[${MAG};7m"
+CL_BG_CYAN="\e[${CYAN};7m"
+CL_BG_GREY="\e[${GREY};7m"
+
+###############################################################################
+
+DKR_RPMB_PREFIX="rpmbuilder"
+
+###############################################################################
+
+main() {
+  if [[ ! -t 1 || -n "$no_colors" ]] ; then
+    unset NORM BOLD UNLN RED GREEN BROWN BLUE MAG CYAN GREY
+    unset CL_NORM CL_BOLD CL_UNLN CL_RED CL_GREEN CL_BROWN CL_BLUE CL_MAG CL_CYAN CL_GREY
+    unset CL_BL_RED CL_BL_GREEN CL_BL_BROWN CL_BL_BLUE CL_BL_MAG CL_BL_CYAN CL_BL_GREY
+    unset CL_UL_RED CL_UL_GREEN CL_UL_BROWN CL_UL_BLUE CL_UL_MAG CL_UL_CYAN CL_UL_GREY
+    unset CL_BG_RED CL_BG_GREEN CL_BG_BROWN CL_BG_BLUE CL_BG_MAG CL_BG_CYAN CL_BG_GREY
+  fi
+
+  [[ -n "$version" || -n "$ver" ]] && about && doExit
+  [[ -n "$help" || -n "$usage" ]] && usage && doExit
+  [[ "$1" == "help" || "$1" == "h" ]] && helpCommand "$2" && doExit
+
+  if ! checkDeps "docker" ; then
+    show "For using $APP you must install 'docker' utility first." $RED
+    doExit 1
+  fi
+
+  local cmd="$1"
+
+  case $cmd in
+    "p"|"pack")
+      shift
+      packCommand $@ ;;
+    "u"|"unpack")
+      shift
+      unpackCommand $@ ;;
+    "c"|"check")
+      shift
+      checkCommand $@ ;;
+    *|"h"|"help") 
+      shift
+      helpCommand $@ ;;
+  esac
+
+  doExit
+}
+
+###############################################################################
+
+show() {
+  if [[ -n "$2" && -z "$no_colors" ]] ; then
+    echo -e "\e[${2}m${1}\e[0m"
+  else
+    echo -e "$1"
+  fi
+}
+
+checkDeps () {
+  for app in $@ ; do
+    type -P $app &> /dev/null
+    [[ $? -eq 1 ]] && return 1
+  done
+
+  return 0
+}
+
+doExit() {
+  exit ${1-0}
+}
+
+###############################################################################
+# Usage
+###############################################################################
+
+about() {
+  show ""
+  show "${CL_BL_CYAN}$APP${CL_NORM} ${CL_CYAN}$VER${CL_NORM} - Docker-based RPM building utility"
+  show ""
+  show "Copyright (C) 2005-2017 SIMTECH" $GREY
+  show "MIT public license" $GREY
+  show ""
+}
+
+usage() {
+  show ""
+  show "${CL_BOLD}Usage:${CL_NORM} $APP ${CL_BROWN}command${CL_NORM} ${CL_BROWN}image${CL_NORM} ${CL_BROWN}source${CL_NORM} ${CL_GREEN}<option>${CL_NORM}"
+  show ""
+  show "${CL_BOLD}Commands:${CL_NORM}"
+  show ""
+  show "  ${CL_BROWN}p${CL_NORM} or ${CL_BROWN}pack${CL_NORM}             Create RPM package from spec file"
+  show "  ${CL_BROWN}u${CL_NORM} or ${CL_BROWN}unpack${CL_NORM}           Unpack source files from SRPM package"
+  show "  ${CL_BROWN}c${CL_NORM} or ${CL_BROWN}check${CL_NORM}            Validate spec file using RPMLint"
+  show "  ${CL_BROWN}h${CL_NORM} or ${CL_BROWN}help${CL_NORM}             Show detailed information about command"
+  show ""
+  show "See \"$APP help ${CL_BROWN}<command>${CL_NORM}\" for information on a specific command."
+  show ""
+  show "${CL_BOLD}Examples:${CL_NORM}"
+  show ""
+  show "  $APP pack 6 htop.spec -V -1"
+  show "  $APP unpack 7 htop-2.0.2-0.el7.src.rpm"
+  show "  $APP check 6 htop.spec"
+  show ""
+}
+
+usagePack() {
+  show ""
+  show "${CL_BOLD}Usage:${CL_NORM} $APP pack <tag> <spec> <options>"
+  show ""
+  show "  Create RPM package from spec file."
+  show ""
+  show "${CL_BOLD}Examples:${CL_NORM}"
+  show ""
+  show "  $APP pack 6 htop.spec -V -1"
+  show ""
+}
+
+usageUnpack() {
+  show ""
+  show "${CL_BOLD}Usage:${CL_NORM} $APP unpack <tag> <srpm>"
+  show ""
+  show "  Unpack source files from SRPM package."
+  show ""
+  show "${CL_BOLD}Examples:${CL_NORM}"
+  show ""
+  show "  $APP unpack 6 htop-2.0.2-0.el7.src.rpm"
+  show ""
+}
+
+usageCheck() {
+  show ""
+  show "${CL_BOLD}Usage:${CL_NORM} $APP check <tag> <spec>"
+  show ""
+  show "  Validate spec file using RPMLint."
+  show ""
+  show "${CL_BOLD}Examples:${CL_NORM}"
+  show ""
+  show "  $APP check 6 htop.spec"
+  show ""
+}
+
+usageHelp() {
+  show "\nNothing interesting here.\n"
+}
+
+###############################################################################
+# Commands
+###############################################################################
+
+dockerRun() {
+  docker run -e LOCAL_USER_ID=$(id -u) --rm -it $@
+}
+
+packCommand() {
+  local tag="${1:-latest}"
+  local specpath="${2}"
+  local specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
+  local specname="$(basename $specpath)"
+  shift 2
+
+  local rpmb_img="${DKR_RPMB_PREFIX}:${tag}"
+  local rpmb_args="-di $@"
+
+  dockerRun -v "$specdir":/rpmbuilder \
+            "$rpmb_img" \
+            "/usr/bin/rpmbuilder" \
+            "$specname" \
+            $rpmb_args
+}
+
+unpackCommand() {
+  local tag="${1:-latest}"
+  local srpmpath="${2}"
+  local srpmdir="$(cd "$(dirname "$srpmpath")" && pwd -P)"
+  local srpmname="$(basename $srpmpath)"
+  shift 2
+
+  local unrpmb_img="${DKR_RPMB_PREFIX}:${tag}"
+  local unrpmb_args="."
+
+  dockerRun -v "$srpmdir":/rpmbuilder \
+            "$unrpmb_img" \
+            "/usr/bin/rpmunbuilder" \
+            "$srpmname" \
+            "$unrpmb_args"
+}
+
+checkCommand() {
+  local tag="${1:-latest}"
+  local specpath="${2}"
+  local specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
+  local specname="$(basename $specpath)"
+  shift 2
+
+  local rpmlint_img="${DKR_RPMB_PREFIX}:${tag}"
+  local rpmlint_args="$@"
+
+  dockerRun -v "$specdir":/rpmbuilder \
+            "$rpmlint_img" \
+            "/usr/bin/rpmlint" \
+            "$specname" \
+            $rpmlint_args
+}
+
+helpCommand() {
+  if [[ -z "$1" ]] ; then
+    usage
+    doExit
+  fi
+
+  case $1 in
+    "p"|"pack")              usagePack $@ ;;
+    "u"|"unpack")            usageUnpack $@ ;;
+    "c"|"check")             usageCheck $@ ;;
+    "h"|"help")              usageHelp ;;
+    *) show "Unknown command ${CL_CYAN}$1${CL_NORM}." ;;
+  esac
+}
+
+###############################################################################
+
+main "$@"
