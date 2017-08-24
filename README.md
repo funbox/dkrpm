@@ -2,7 +2,7 @@
 
 Dockerized RPM building tool for any platforms based on [RPMBuilder](https://github.com/essentialkaos/rpmbuilder).
 
-[About](#about) • [Demo](#demo) • [Requirements](#requirements) • [Getting started](#getting-started) • [Prebuilt images](#prebuilt-images) • [Available repositories](#available-repositories) • [Usage](#usage) • [License](#license)
+<p align="center"><a href="#about">About</a> • <a href="#demo">Demo</a> • <a href="#requirements">Requirements</a> • <a href="#getting-started">Getting started</a> • <a href="#prebuilt-images">Prebuilt images</a> • <a href="#available-repositories">Available repositories</a> • <a href="#usage">Usage</a> • <a href="#license">License</a></p>
 
 ## Demo
 
