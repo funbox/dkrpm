@@ -86,7 +86,10 @@ main() {
     "c"|"check")
       shift
       checkCommand $@ ;;
-    *|"h"|"help") 
+    "d"|"debug")
+      shift
+      debugCommand $@ ;;
+    *|"h"|"help")
       shift
       helpCommand $@ ;;
   esac
@@ -139,6 +142,7 @@ usage() {
   show "  ${CL_BROWN}p${CL_NORM} or ${CL_BROWN}pack${CL_NORM}             Create RPM package from spec file"
   show "  ${CL_BROWN}u${CL_NORM} or ${CL_BROWN}unpack${CL_NORM}           Unpack source files from SRPM package"
   show "  ${CL_BROWN}c${CL_NORM} or ${CL_BROWN}check${CL_NORM}            Validate spec file using RPMLint"
+  show "  ${CL_BROWN}d${CL_NORM} or ${CL_BROWN}debug${CL_NORM}            Run shell command instead of RPMBuilder"
   show "  ${CL_BROWN}h${CL_NORM} or ${CL_BROWN}help${CL_NORM}             Show detailed information about command"
   show ""
   show "See \"$APP help ${CL_BROWN}<command>${CL_NORM}\" for information on a specific command."
@@ -148,6 +152,7 @@ usage() {
   show "  $APP pack 6 htop.spec -V -1"
   show "  $APP unpack 7 htop-2.0.2-0.el7.src.rpm"
   show "  $APP check 6 htop.spec"
+  show "  $APP debug 6 htop.spec"
   show ""
 }
 
@@ -187,6 +192,18 @@ usageCheck() {
   show ""
 }
 
+usageDebug() {
+  show ""
+  show "${CL_BOLD}Usage:${CL_NORM} $APP debug <tag> <spec>"
+  show ""
+  show "  Run shell instead of RPMBuilder."
+  show ""
+  show "${CL_BOLD}Examples:${CL_NORM}"
+  show ""
+  show "  $APP debug 6 htop.spec"
+  show ""
+}
+
 usageHelp() {
   show "\nNothing interesting here.\n"
 }
@@ -214,6 +231,20 @@ packCommand() {
             "/usr/bin/rpmbuilder" \
             "$specname" \
             $rpmb_args
+}
+
+debugCommand() {
+  local tag="${1:-latest}"
+  local specpath="${2}"
+  local specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
+  local specname="$(basename $specpath)"
+  shift 2
+
+  local rpmb_img="${DKR_RPMB_PREFIX}:${tag}"
+
+  dockerRun -v "$specdir":/rpmbuilder \
+            "$rpmb_img" \
+            "/bin/bash"
 }
 
 unpackCommand() {
@@ -260,6 +291,7 @@ helpCommand() {
     "p"|"pack")              usagePack $@ ;;
     "u"|"unpack")            usageUnpack $@ ;;
     "c"|"check")             usageCheck $@ ;;
+    "d"|"debug")             usageDebug $@ ;;
     "h"|"help")              usageHelp ;;
     *) show "Unknown command ${CL_CYAN}$1${CL_NORM}." ;;
   esac
