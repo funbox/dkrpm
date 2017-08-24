@@ -2,6 +2,10 @@
 
 Dockerized RPM building tool for any platforms based on [RPMBuilder](https://github.com/essentialkaos/rpmbuilder).
 
+## Demo
+
+[![asciicast](https://asciinema.org/a/134853.png)](https://asciinema.org/a/134853)
+
 ## Requirements
 
 - Docker 1.11 or higher
