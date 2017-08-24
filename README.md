@@ -2,7 +2,7 @@
 
 Dockerized RPM building tool for any platforms based on [RPMBuilder](https://github.com/essentialkaos/rpmbuilder).
 
-<p align="center"><a href="#about">About</a> • <a href="#demo">Demo</a> • <a href="#requirements">Requirements</a> • <a href="#getting-started">Getting started</a> • <a href="#prebuilt-images">Prebuilt images</a> • <a href="#available-repositories">Available repositories</a> • <a href="#usage">Usage</a> • <a href="#license">License</a></p>
+<p align="center"><a href="#about">About</a> • <a href="#demo">Demo</a> • <a href="#requirements">Requirements</a> • <a href="#getting-started">Getting started</a> • <a href="#prebuilt-images">Prebuilt images</a> • <a href="#available-repositories">Available repositories</a> • <a href="#usage">Usage</a> • <a href="#credits">Credits</a> • <a href="#license">License</a></p>
 
 ## Demo
 
@@ -67,6 +67,10 @@ Examples:
   dkrpm check 6 htop.spec
   dkrpm debug 6 htop.spec
 ```
+
+## Credits
+
+[Anton Novojilov](https://github.com/andyone) for RPMBuilder and ESSENTIAL KAOS repository.
 
 ## License
 
