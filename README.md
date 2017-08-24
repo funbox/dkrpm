@@ -47,13 +47,14 @@ _In case you need to setup your custom repository, please make changes to `Docke
 ## Usage
 
 ```
-Usage: dkrpm command image source <option>
+Usage: dkrpm command tag source <option>
 
 Commands:
 
   p or pack             Create RPM package from spec file
   u or unpack           Unpack source files from SRPM package
   c or check            Validate spec file using RPMLint
+  d or debug            Run shell command instead of RPMBuilder
   h or help             Show detailed information about command
 
 See "dkrpm help <command>" for information on a specific command.
@@ -63,6 +64,7 @@ Examples:
   dkrpm pack 6 htop.spec -V -1
   dkrpm unpack 7 htop-2.0.2-0.el7.src.rpm
   dkrpm check 6 htop.spec
+  dkrpm debug 6 htop.spec
 ```
 
 ## License
