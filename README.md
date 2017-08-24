@@ -4,7 +4,7 @@ Dockerized RPM building tool for any platforms based on [RPMBuilder](https://git
 
 ## Demo
 
-[![asciicast](https://asciinema.org/a/134853.png)](https://asciinema.org/a/134853)
+[![asciicast](https://asciinema.org/a/134855.png)](https://asciinema.org/a/134855)
 
 ## Requirements
 
