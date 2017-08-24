@@ -124,8 +124,8 @@ about() {
   show ""
   show "${CL_BL_CYAN}$APP${CL_NORM} ${CL_CYAN}$VER${CL_NORM} - Docker-based RPM building utility"
   show ""
-  show "Copyright (C) 2005-2017 SIMTECH" $GREY
-  show "MIT public license" $GREY
+  show "Copyright (C) 2009-2017 Gleb E Goncharov <inbox@gongled.ru>" $GREY
+  show "MIT" $GREY
   show ""
 }
 
@@ -145,10 +145,10 @@ usage() {
   show ""
   show "${CL_BOLD}Examples:${CL_NORM}"
   show ""
-  show "  $APP pack 6 htop.spec -V -1"
-  show "  $APP unpack 7 htop-2.0.2-0.el7.src.rpm"
-  show "  $APP check 6 htop.spec"
-  show "  $APP debug 6 htop.spec"
+  show "  $APP pack rpmbuilder6 htop.spec -V -1"
+  show "  $APP unpack rpmbuilder7 htop-2.0.2-0.el7.src.rpm"
+  show "  $APP check rpmbuilder6 htop.spec"
+  show "  $APP debug rpmbuilder6 htop.spec"
   show ""
 }
 
@@ -160,7 +160,7 @@ usagePack() {
   show ""
   show "${CL_BOLD}Examples:${CL_NORM}"
   show ""
-  show "  $APP pack 6 htop.spec -V -1"
+  show "  $APP pack rpmbuilder6 htop.spec -V -1"
   show ""
 }
 
@@ -172,7 +172,7 @@ usageUnpack() {
   show ""
   show "${CL_BOLD}Examples:${CL_NORM}"
   show ""
-  show "  $APP unpack 6 htop-2.0.2-0.el7.src.rpm"
+  show "  $APP unpack rpmbuilder6 htop-2.0.2-0.el7.src.rpm"
   show ""
 }
 
@@ -184,7 +184,7 @@ usageCheck() {
   show ""
   show "${CL_BOLD}Examples:${CL_NORM}"
   show ""
-  show "  $APP check 6 htop.spec"
+  show "  $APP check rpmbuilder6 htop.spec"
   show ""
 }
 
@@ -196,7 +196,7 @@ usageDebug() {
   show ""
   show "${CL_BOLD}Examples:${CL_NORM}"
   show ""
-  show "  $APP debug 6 htop.spec"
+  show "  $APP debug rpmbuilder6 htop.spec"
   show ""
 }
 
