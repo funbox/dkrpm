@@ -46,7 +46,7 @@ _In case you need to setup custom YUM repository, please make changes to `Docker
 ## Usage
 
 ```
-Usage: dkrpm command tag source <option>
+Usage: dkrpm command image source <option>
 
 Commands:
 
