@@ -1,9 +1,9 @@
-FROM centos:7.3
+FROM centos:7
 LABEL name="CentOS 7.x RPMBuilder Image" \
       license="MIT" \
       vendor="GONGLED" \
       maintainer="Gleb E Goncharov" \
-      build-date="2017-08-24" \
+      build-date="2017-08-24"
 
 RUN yum -y clean all && \
     yum -y install https://yum.kaos.io/7/release/x86_64/kaos-repo-7.2-0.el7.noarch.rpm \
