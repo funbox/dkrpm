@@ -8,24 +8,19 @@ Dockerized RPM building tool for any platforms based on [RPMBuilder](https://git
 
 ## Getting started
 
-Build Docker images with RPMBuilder locally.
+Install `dkrpm` shell script to one of available `$PATH` directory.
 
 ```shell
-cd rpmbuilder6/
-docker build -t rpmbuilder:6 .
-
-cd ../rpmbuilder7/
-docker build -t rpmbuilder:7 .
+sudo cp dkrpm /usr/local/bin/dkrpm
+sudo chmod +x /usr/local/bin/dkrpm
 ```
 
-Pay attention, image name is mandatory. You can easily change the name in `dkrpm` shell script in `DKR_RPMB_PREFIX` variable, but tag should be the major version of RHEL/CentOS.
+## Prebuilt images
 
-```shell
-[sudo] cp dkrpm /usr/local/bin/
-[sudo] chmod +x /usr/local/bin/
-```
+Feel free to use any of the following prebuilt images:
 
-Done. Now you can invoke `dkrpm` command to build your RPM.
+- [gongled/rpmbuilder:6](https://hub.docker.com/r/gongled/rpmbuilder/)
+- [gongled/rpmbuilder:7](https://hub.docker.com/r/gongled/rpmbuilder/)
 
 ## Available repositories
 
@@ -42,7 +37,7 @@ Docker images provide the following repositories by default.
 - [EPEL](https://fedoraproject.org/wiki/EPEL)
 - [ESSENTIAL KAOS](https://github.com/essentialkaos/kaos-repo)
 
-_In case you need to setup your custom repository, please make changes to `Dockerfile` and build your own image._
+_In case you need to setup custom YUM repository, please make changes to `Dockerfile` and build your own image._
 
 ## Usage
 

@@ -32,7 +32,7 @@ cat<<EOF >/home/rpmbuilder/.rpmmacros
 %_binary_payload w7.xzdio
 EOF
 
-# Fix for docker/docker issue about /proc/self/fd/{0,1,2} 
+# Fix for docker/docker issue about /proc/self/fd/{0,1,2}
 # URL: https://github.com/docker/docker/issues/11462
 chmod 777 /dev/stdout
 

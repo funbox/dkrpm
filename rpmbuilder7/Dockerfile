@@ -1,22 +1,28 @@
 FROM centos:7
+
 LABEL name="CentOS 7.x RPMBuilder Image" \
       license="MIT" \
       vendor="GONGLED" \
       maintainer="Gleb E Goncharov" \
       build-date="2017-08-24"
 
-RUN yum -y clean all && \
-    yum -y install https://yum.kaos.io/7/release/x86_64/kaos-repo-7.2-0.el7.noarch.rpm \
-                   http://release.yum.smtk.us/7/x86_64/smtk-repo-1.1-0.el7.noarch.rpm \
+###############################################################################
+
+ARG KAOS_REPO_VERSION=8.0-0
+ARG GOSU_VERSION=1.10
+
+###############################################################################
+
+RUN yum -y -q install https://yum.kaos.io/7/release/x86_64/kaos-repo-$KAOS_REPO_VERSION.el7.noarch.rpm \
                    epel-release && \
-    yum -y clean metadata && \
-    yum -y update && \
-    yum -y clean all
+    yum -y -q clean metadata && \
+    yum -y -q update && \
+    yum -y -q clean all
 
-RUN yum -y install sudo rpmbuilder make && \
-    yum -y clean all
+RUN yum -y -q install sudo rpmbuilder make && \
+    yum -y -q clean all
 
-RUN curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64" \
+RUN curl -o /usr/local/bin/gosu -sSL "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-amd64" \
     && chmod +x /usr/local/bin/gosu
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
