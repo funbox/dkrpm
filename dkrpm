@@ -231,7 +231,7 @@ packCommand() {
 
 debugCommand() {
   local img="${1}"
-  local specpath="${2}"
+  local specpath="${2:-.}"
   local specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
   local specname="$(basename $specpath)"
   shift 2
