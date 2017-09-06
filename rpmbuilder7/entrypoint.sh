@@ -4,7 +4,12 @@ set -e
 
 RPMB_NAME="${1}"
 shift
-USER_ID=${LOCAL_USER_ID:-9001}
+
+if [[ ! $LOCAL_USER_ID -eq 0 ]] ; then
+    USER_ID=${LOCAL_USER_ID:-9001}
+else
+    USER_ID=9001
+fi
 
 useradd -s /bin/bash -u $USER_ID -m -d /home/rpmbuilder -m rpmbuilder
 
