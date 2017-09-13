@@ -220,7 +220,7 @@ packCommand() {
   shift 2
 
   local rpmb_img="${img}"
-  local rpmb_args="-di $@"
+  local rpmb_args="$@"
 
   dockerRun -v "$specdir":/rpmbuilder \
             "$rpmb_img" \
