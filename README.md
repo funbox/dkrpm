@@ -68,10 +68,10 @@ See "dkrpm help <command>" for information on a specific command.
 
 Examples:
 
-  dkrpm pack 6 htop.spec -V -1
-  dkrpm unpack 7 htop-2.0.2-0.el7.src.rpm
-  dkrpm check 6 htop.spec
-  dkrpm debug 6 htop.spec
+  dkrpm pack rpmbuilder:6 htop.spec -V -1
+  dkrpm unpack rpmbuilder:7 htop-2.0.2-0.el7.src.rpm
+  dkrpm check rpmbuilder:6 htop.spec
+  dkrpm debug rpmbuilder:6 htop.spec
 ```
 
 ## ShellCheck Status

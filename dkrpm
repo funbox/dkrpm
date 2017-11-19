@@ -145,10 +145,10 @@ usage() {
   show ""
   show "${CL_BOLD}Examples:${CL_NORM}"
   show ""
-  show "  $APP pack rpmbuilder6 htop.spec -V -1"
-  show "  $APP unpack rpmbuilder7 htop-2.0.2-0.el7.src.rpm"
-  show "  $APP check rpmbuilder6 htop.spec"
-  show "  $APP debug rpmbuilder6 htop.spec"
+  show "  $APP pack rpmbuilder:6 htop.spec -V -1"
+  show "  $APP unpack rpmbuilder:7 htop-2.0.2-0.el7.src.rpm"
+  show "  $APP check rpmbuilder:6 htop.spec"
+  show "  $APP debug rpmbuilder:6 htop.spec"
   show ""
 }
 
