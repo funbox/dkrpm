@@ -1,9 +1,9 @@
-#!/usr/bin/env bash
+#! /usr/bin/env bash
 
 ###############################################################################
 
 APP="dkrpm"
-VER="1.3.0"
+VER="1.4.0"
 
 ###############################################################################
 
@@ -18,37 +18,37 @@ MAG=35
 CYAN=36
 GREY=37
 
-CL_NORM="\e[${NORM}m"
-CL_BOLD="\e[${BOLD}m"
-CL_UNLN="\e[${UNLN}m"
-CL_RED="\e[${RED}m"
-CL_GREEN="\e[${GREEN}m"
-CL_BROWN="\e[${BROWN}m"
-CL_BLUE="\e[${BLUE}m"
-CL_MAG="\e[${MAG}m"
-CL_CYAN="\e[${CYAN}m"
-CL_GREY="\e[${GREY}m"
-CL_BL_RED="\e[${RED};1m"
-CL_BL_GREEN="\e[${GREEN};1m"
-CL_BL_BROWN="\e[${BROWN};1m"
-CL_BL_BLUE="\e[${BLUE};1m"
-CL_BL_MAG="\e[${MAG};1m"
-CL_BL_CYAN="\e[${CYAN};1m"
-CL_BL_GREY="\e[${GREY};1m"
-CL_UL_RED="\e[${RED};4m"
-CL_UL_GREEN="\e[${GREEN};4m"
-CL_UL_BROWN="\e[${BROWN};4m"
-CL_UL_BLUE="\e[${BLUE};4m"
-CL_UL_MAG="\e[${MAG};4m"
-CL_UL_CYAN="\e[${CYAN};4m"
-CL_UL_GREY="\e[${GREY};4m"
-CL_BG_RED="\e[${RED};7m"
-CL_BG_GREEN="\e[${GREEN};7m"
-CL_BG_BROWN="\e[${BROWN};7m"
-CL_BG_BLUE="\e[${BLUE};7m"
-CL_BG_MAG="\e[${MAG};7m"
-CL_BG_CYAN="\e[${CYAN};7m"
-CL_BG_GREY="\e[${GREY};7m"
+CL_NORM="\033[${NORM}m"
+CL_BOLD="\033[${BOLD}m"
+CL_UNLN="\033[${UNLN}m"
+CL_RED="\033[${RED}m"
+CL_GREEN="\033[${GREEN}m"
+CL_BROWN="\033[${BROWN}m"
+CL_BLUE="\033[${BLUE}m"
+CL_MAG="\033[${MAG}m"
+CL_CYAN="\033[${CYAN}m"
+CL_GREY="\033[${GREY}m"
+CL_BL_RED="\033[${RED};1m"
+CL_BL_GREEN="\033[${GREEN};1m"
+CL_BL_BROWN="\033[${BROWN};1m"
+CL_BL_BLUE="\033[${BLUE};1m"
+CL_BL_MAG="\033[${MAG};1m"
+CL_BL_CYAN="\033[${CYAN};1m"
+CL_BL_GREY="\033[${GREY};1m"
+CL_UL_RED="\033[${RED};4m"
+CL_UL_GREEN="\033[${GREEN};4m"
+CL_UL_BROWN="\033[${BROWN};4m"
+CL_UL_BLUE="\033[${BLUE};4m"
+CL_UL_MAG="\033[${MAG};4m"
+CL_UL_CYAN="\033[${CYAN};4m"
+CL_UL_GREY="\033[${GREY};4m"
+CL_BG_RED="\033[${RED};7m"
+CL_BG_GREEN="\033[${GREEN};7m"
+CL_BG_BROWN="\033[${BROWN};7m"
+CL_BG_BLUE="\033[${BLUE};7m"
+CL_BG_MAG="\033[${MAG};7m"
+CL_BG_CYAN="\033[${CYAN};7m"
+CL_BG_GREY="\033[${GREY};7m"
 
 ###############################################################################
 
@@ -75,19 +75,19 @@ main() {
   case $cmd in
     "p"|"pack")
       shift
-      packCommand $@ ;;
+      packCommand "$@" ;;
     "u"|"unpack")
       shift
-      unpackCommand $@ ;;
+      unpackCommand "$@" ;;
     "c"|"check")
       shift
-      checkCommand $@ ;;
+      checkCommand "$@" ;;
     "d"|"debug")
       shift
-      debugCommand $@ ;;
+      debugCommand "$@" ;;
     *|"h"|"help")
       shift
-      helpCommand $@ ;;
+      helpCommand "$@" ;;
   esac
 
   doExit
@@ -97,15 +97,15 @@ main() {
 
 show() {
   if [[ -n "$2" && -z "$no_colors" ]] ; then
-    echo -e "\e[${2}m${1}\e[0m"
+    echo -e "\033[${2}m${1}\033[0m"
   else
     echo -e "$1"
   fi
 }
 
 checkDeps () {
-  for app in $@ ; do
-    type -P $app &> /dev/null
+  for app in "$@" ; do
+    type "$app" &> /dev/null
     [[ $? -eq 1 ]] && return 1
   done
 
@@ -113,7 +113,7 @@ checkDeps () {
 }
 
 doExit() {
-  exit ${1-0}
+  exit "${1-0}"
 }
 
 ###############################################################################
@@ -145,10 +145,10 @@ usage() {
   show ""
   show "${CL_BOLD}Examples:${CL_NORM}"
   show ""
-  show "  $APP pack rpmbuilder6 htop.spec -V -1"
-  show "  $APP unpack rpmbuilder7 htop-2.0.2-0.el7.src.rpm"
-  show "  $APP check rpmbuilder6 htop.spec"
-  show "  $APP debug rpmbuilder6 htop.spec"
+  show "  $APP pack rpmbuilder:6 htop.spec -V -1"
+  show "  $APP unpack rpmbuilder:7 htop-2.0.2-0.el7.src.rpm"
+  show "  $APP check rpmbuilder:6 htop.spec"
+  show "  $APP debug rpmbuilder:6 htop.spec"
   show ""
 }
 
@@ -209,34 +209,45 @@ usageHelp() {
 ###############################################################################
 
 dockerRun() {
-  docker run -e LOCAL_USER_ID=$(id -u) --rm -it $@
+  docker run -e LOCAL_USER_ID="$(id -u)" --rm -it "$@"
 }
 
 packCommand() {
-  local img="${1}"
-  local specpath="${2}"
-  local specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
-  local specname="$(basename $specpath)"
+  local img
+  local specpath
+  local specdir
+  local specname
+  local rpmb_img
+
+  img="${1}"
+  specpath="${2}"
+  specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
+  specname=$(basename "$specpath")
   shift 2
 
-  local rpmb_img="${img}"
-  local rpmb_args="-di $@"
+  rpmb_img="${img}"
 
   dockerRun -v "$specdir":/rpmbuilder \
             "$rpmb_img" \
             "/usr/bin/rpmbuilder" \
             "$specname" \
-            $rpmb_args
+            "$@" 
 }
 
 debugCommand() {
-  local img="${1}"
-  local specpath="${2:-.}"
-  local specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
-  local specname="$(basename $specpath)"
+  local img
+  local specpath
+  local specdir
+  local specname
+  local rpmb_img
+
+  img="${1}"
+  specpath="${2:-.}"
+  specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
+  specname=$(basename "$specpath")
   shift 2
 
-  local rpmb_img="${img}"
+  rpmb_img="${img}"
 
   dockerRun -v "$specdir":/rpmbuilder \
             "$rpmb_img" \
@@ -244,14 +255,23 @@ debugCommand() {
 }
 
 unpackCommand() {
-  local img="${1}"
-  local srpmpath="${2}"
-  local srpmdir="$(cd "$(dirname "$srpmpath")" && pwd -P)"
-  local srpmname="$(basename $srpmpath)"
+  local img
+  local srpmpath
+  local srpmdir
+  local srpmname
   shift 2
 
-  local unrpmb_img="${img}"
-  local unrpmb_args="."
+  local unrpmb_img
+  local unrpmb_args
+
+  img="${1}"
+  srpmpath="${2}"
+  srpmdir="$(cd "$(dirname "$srpmpath")" && pwd -P)"
+  srpmname=$(basename "$srpmpath")
+  shift 2
+
+  unrpmb_img="${img}"
+  unrpmb_args="."
 
   dockerRun -v "$srpmdir":/rpmbuilder \
             "$unrpmb_img" \
@@ -261,20 +281,25 @@ unpackCommand() {
 }
 
 checkCommand() {
-  local img="${1}"
-  local specpath="${2}"
-  local specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
-  local specname="$(basename $specpath)"
+  local img
+  local specpath
+  local specdir
+  local specname
+  local rpmlint_img
+
+  img="${1}"
+  specpath="${2}"
+  specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
+  specname=$(basename "$specpath")
   shift 2
 
-  local rpmlint_img="${img}"
-  local rpmlint_args="$@"
+  rpmlint_img="${img}"
 
   dockerRun -v "$specdir":/rpmbuilder \
             "$rpmlint_img" \
             "/usr/bin/rpmlint" \
             "$specname" \
-            $rpmlint_args
+            "$@"
 }
 
 helpCommand() {
@@ -284,10 +309,10 @@ helpCommand() {
   fi
 
   case $1 in
-    "p"|"pack")              usagePack $@ ;;
-    "u"|"unpack")            usageUnpack $@ ;;
-    "c"|"check")             usageCheck $@ ;;
-    "d"|"debug")             usageDebug $@ ;;
+    "p"|"pack")              usagePack "$@" ;;
+    "u"|"unpack")            usageUnpack "$@" ;;
+    "c"|"check")             usageCheck "$@" ;;
+    "d"|"debug")             usageDebug "$@" ;;
     "h"|"help")              usageHelp ;;
     *) show "Unknown command ${CL_CYAN}$1${CL_NORM}." ;;
   esac

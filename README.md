@@ -2,7 +2,7 @@
 
 Dockerized RPM building tool for any platforms based on [RPMBuilder](https://github.com/essentialkaos/rpmbuilder).
 
-<p align="center"><a href="#about">About</a> • <a href="#demo">Demo</a> • <a href="#requirements">Requirements</a> • <a href="#getting-started">Getting started</a> • <a href="#prebuilt-images">Prebuilt images</a> • <a href="#available-repositories">Available repositories</a> • <a href="#usage">Usage</a> • <a href="#credits">Credits</a> • <a href="#license">License</a></p>
+<p align="center"><a href="#demo">Demo</a> • <a href="#requirements">Requirements</a> • <a href="#getting-started">Getting started</a> • <a href="#prebuilt-images">Prebuilt images</a> • <a href="#usage">Usage</a> • <a href="#shellcheck-status">ShellCheck Status</a> • <a href="#credits">Credits</a> • <a href="#license">License</a></p>
 
 ## Demo
 
@@ -28,17 +28,23 @@ Feel free to use any of the following prebuilt images:
 - [gongled/rpmbuilder:6](https://hub.docker.com/r/gongled/rpmbuilder/)
 - [gongled/rpmbuilder:7](https://hub.docker.com/r/gongled/rpmbuilder/)
 
-## Available repositories
+Use Makefile target `all` to build example images from the source code:
+
+```
+make all
+```
+
+#### Available repositories
 
 Docker images provide the following repositories by default.
 
-#### CentOS/RHEL 6
+##### CentOS/RHEL 6
 
 - [EPEL](https://fedoraproject.org/wiki/EPEL)
 - [ESSENTIAL KAOS](https://github.com/essentialkaos/kaos-repo)
 - [Software Collections](https://linux.web.cern.ch/linux/other.shtml)
 
-#### CentOS/RHEL 7
+##### CentOS/RHEL 7
 
 - [EPEL](https://fedoraproject.org/wiki/EPEL)
 - [ESSENTIAL KAOS](https://github.com/essentialkaos/kaos-repo)
@@ -62,11 +68,18 @@ See "dkrpm help <command>" for information on a specific command.
 
 Examples:
 
-  dkrpm pack 6 htop.spec -V -1
-  dkrpm unpack 7 htop-2.0.2-0.el7.src.rpm
-  dkrpm check 6 htop.spec
-  dkrpm debug 6 htop.spec
+  dkrpm pack rpmbuilder:6 htop.spec -V -1
+  dkrpm unpack rpmbuilder:7 htop-2.0.2-0.el7.src.rpm
+  dkrpm check rpmbuilder:6 htop.spec
+  dkrpm debug rpmbuilder:6 htop.spec
 ```
+
+## ShellCheck Status
+
+| Branch | Status |
+|------------|--------|
+| `master` | [![Build Status](https://travis-ci.org/gongled/dkrpm.svg?branch=master)](https://travis-ci.org/gongled/dkrpm) |
+| `develop` | [![Build Status](https://travis-ci.org/gongled/dkrpm.svg?branch=develop)](https://travis-ci.org/gongled/dkrpm) |
 
 ## Credits
 
