@@ -2,7 +2,7 @@
 
 Dockerized RPM building tool for any platforms based on [RPMBuilder](https://github.com/essentialkaos/rpmbuilder).
 
-<p align="center"><a href="#demo">Demo</a> • <a href="#requirements">Requirements</a> • <a href="#getting-started">Getting started</a> • <a href="#prebuilt-images">Prebuilt images</a> • <a href="#available-repositories">Available repositories</a> • <a href="#usage">Usage</a> • <a href="#shellcheck-status">ShellCheck Status</a> • <a href="#credits">Credits</a> • <a href="#license">License</a></p>
+<p align="center"><a href="#demo">Demo</a> • <a href="#requirements">Requirements</a> • <a href="#getting-started">Getting started</a> • <a href="#prebuilt-images">Prebuilt images</a> • <a href="#usage">Usage</a> • <a href="#shellcheck-status">ShellCheck Status</a> • <a href="#credits">Credits</a> • <a href="#license">License</a></p>
 
 ## Demo
 
@@ -34,17 +34,17 @@ Use Makefile target `all` to build example images from the source code:
 make all
 ```
 
-## Available repositories
+#### Available repositories
 
 Docker images provide the following repositories by default.
 
-#### CentOS/RHEL 6
+##### CentOS/RHEL 6
 
 - [EPEL](https://fedoraproject.org/wiki/EPEL)
 - [ESSENTIAL KAOS](https://github.com/essentialkaos/kaos-repo)
 - [Software Collections](https://linux.web.cern.ch/linux/other.shtml)
 
-#### CentOS/RHEL 7
+##### CentOS/RHEL 7
 
 - [EPEL](https://fedoraproject.org/wiki/EPEL)
 - [ESSENTIAL KAOS](https://github.com/essentialkaos/kaos-repo)
