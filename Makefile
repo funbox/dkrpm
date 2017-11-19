@@ -13,4 +13,7 @@ all: $(TARGETS)
 rpmbuilder%:
 	docker build -f $@.docker -t rpmbuilder:$(*F) .
 
+check:
+	bash .linter/linter.sh dkrpm
+
 ########################################################################################
