@@ -28,6 +28,12 @@ Feel free to use any of the following prebuilt images:
 - [gongled/rpmbuilder:6](https://hub.docker.com/r/gongled/rpmbuilder/)
 - [gongled/rpmbuilder:7](https://hub.docker.com/r/gongled/rpmbuilder/)
 
+Use Makefile target `all` to build example images from the source code:
+
+```
+make all
+```
+
 ## Available repositories
 
 Docker images provide the following repositories by default.
