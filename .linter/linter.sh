@@ -12,4 +12,5 @@ else
     echo
     echo "Follow the installation instructions on the official site to resolve this issue:"
     echo "<https://github.com/koalaman/shellcheck#installing>"
+    exit 1
 fi
