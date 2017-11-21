@@ -221,8 +221,15 @@ packCommand() {
 
   img="${1}"
   specpath="${2}"
-  specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
-  specname=$(basename "$specpath")
+
+  if [[ -f "$specpath" ]] ; then
+      specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
+      specname=$(basename "$specpath")
+  else
+      specdir=$(pwd -P)
+      specname="$specpath"
+  fi
+
   shift 2
 
   rpmb_img="${img}"
@@ -243,8 +250,15 @@ debugCommand() {
 
   img="${1}"
   specpath="${2:-.}"
-  specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
-  specname=$(basename "$specpath")
+
+  if [[ -f "$specpath" ]] ; then
+      specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
+      specname=$(basename "$specpath")
+  else
+      specdir=$(pwd -P)
+      specname="$specpath"
+  fi
+
   shift 2
 
   rpmb_img="${img}"
@@ -289,8 +303,15 @@ checkCommand() {
 
   img="${1}"
   specpath="${2}"
-  specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
-  specname=$(basename "$specpath")
+
+  if [[ -f "$specpath" ]] ; then
+      specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
+      specname=$(basename "$specpath")
+  else
+      specdir=$(pwd -P)
+      specname="$specpath"
+  fi
+
   shift 2
 
   rpmlint_img="${img}"
