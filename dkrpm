@@ -111,32 +111,7 @@ main() {
 # Code: No
 # Echo: Yes
 packCommand() {
-  local img
-  local specpath
-  local specdir
-  local specname
-  local rpmb_img
-
-  img="${1}"
-  specpath="${2}"
-
-  if [[ -f "$specpath" ]] ; then
-      specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
-      specname=$(basename "$specpath")
-  else
-      specdir=$(pwd -P)
-      specname="$specpath"
-  fi
-
-  shift 2
-
-  rpmb_img="${img}"
-
-  dockerRun -v "$specdir":/rpmbuilder \
-            "$rpmb_img" \
-            "/usr/bin/rpmbuilder" \
-            "$specname" \
-            "$@"
+  runProgram "/usr/bin/rpmbuilder" "$@"
 }
 
 # Run RPMUnBuilder to unpack SRPM archive to the current directory
@@ -147,29 +122,7 @@ packCommand() {
 # Code: No
 # Echo: Yes
 unpackCommand() {
-  local img
-  local srpmpath
-  local srpmdir
-  local srpmname
-  shift 2
-
-  local unrpmb_img
-  local unrpmb_args
-
-  img="${1}"
-  srpmpath="${2}"
-  srpmdir="$(cd "$(dirname "$srpmpath")" && pwd -P)"
-  srpmname=$(basename "$srpmpath")
-  shift 2
-
-  unrpmb_img="${img}"
-  unrpmb_args="."
-
-  dockerRun -v "$srpmdir":/rpmbuilder \
-            "$unrpmb_img" \
-            "/usr/bin/rpmunbuilder" \
-            "$srpmname" \
-            "$unrpmb_args"
+  runProgram "/usr/bin/rpmunbuilder" "$1" "$2" "."
 }
 
 # Run RPMLint to check validity of SPEC file
@@ -180,32 +133,7 @@ unpackCommand() {
 # Code: No
 # Echo: Yes
 checkCommand() {
-  local img
-  local specpath
-  local specdir
-  local specname
-  local rpmlint_img
-
-  img="${1}"
-  specpath="${2}"
-
-  if [[ -f "$specpath" ]] ; then
-      specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
-      specname=$(basename "$specpath")
-  else
-      specdir=$(pwd -P)
-      specname="$specpath"
-  fi
-
-  shift 2
-
-  rpmlint_img="${img}"
-
-  dockerRun -v "$specdir":/rpmbuilder \
-            "$rpmlint_img" \
-            "/usr/bin/rpmlint" \
-            "$specname" \
-            "$@"
+  runProgram "/usr/bin/rpmlint" "$@"
 }
 
 # Run docker container in path with SPEC file
@@ -216,30 +144,7 @@ checkCommand() {
 # Code: No
 # Echo: Yes
 debugCommand() {
-  local img
-  local specpath
-  local specdir
-  local specname
-  local rpmb_img
-
-  img="${1}"
-  specpath="${2:-.}"
-
-  if [[ -f "$specpath" ]] ; then
-      specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
-      specname=$(basename "$specpath")
-  else
-      specdir=$(pwd -P)
-      specname="$specpath"
-  fi
-
-  shift 2
-
-  rpmb_img="${img}"
-
-  dockerRun -v "$specdir":/rpmbuilder \
-            "$rpmb_img" \
-            "/bin/bash"
+  runProgram "/bin/bash" "$@"
 }
 
 # Print help message
@@ -302,8 +207,47 @@ checkDeps () {
 #
 # Code: No
 # Echo: Yes
-dockerRun() {
-  docker run -e LOCAL_USER_ID="$(id -u)" --rm -it "$@"
+execDocker() {
+  docker run -e LOCAL_USER_ID="$(id -u)" --rm -it $*
+}
+
+# Run command with RPM spec file
+#
+# Code: No
+# Echo: No
+runProgram() {
+  local dockerImage
+  local execBinary
+  local specPath
+  local specDir
+  local specName
+  local extraArgs
+
+  execBinary="${1}"
+  dockerImage="${2}"
+  specPath="${3}"
+
+  if [[ -f "$specPath" ]] ; then
+      specDir="$(cd "$(dirname "$specPath")" && pwd -P)"
+      specName=$(basename "$specPath")
+  else
+      specDir=$(pwd -P)
+      specName=""
+  fi
+
+  shift 2
+
+  if [[ "$specPath" == *rpm ]] ; then
+    extraArgs="."
+  else
+    extraArgs="$@"
+  fi
+
+  execDocker -v "$specDir":/rpmbuilder \
+            "$dockerImage" \
+            "$execBinary" \
+            "$specName" \
+            "$extraArgs"
 }
 
 # Do exit
