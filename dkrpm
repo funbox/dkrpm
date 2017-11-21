@@ -122,7 +122,7 @@ packCommand() {
 # Code: No
 # Echo: Yes
 unpackCommand() {
-  runProgram "/usr/bin/rpmunbuilder" "$1" "$2" "."
+  runProgram "/usr/bin/rpmunbuilder" "$@"
 }
 
 # Run RPMLint to check validity of SPEC file
