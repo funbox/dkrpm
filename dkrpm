@@ -3,7 +3,7 @@
 ###############################################################################
 
 APP="dkrpm"
-VER="1.4.0"
+VER="1.5.0"
 
 ###############################################################################
 
@@ -52,6 +52,12 @@ CL_BG_GREY="\033[${GREY};7m"
 
 ###############################################################################
 
+# Main function
+#
+# *: All unparsed argumens
+#
+# Code: No
+# Echo: No
 main() {
   if [[ ! -t 1 || -n "$no_colors" ]] ; then
     unset NORM BOLD UNLN RED GREEN BROWN BLUE MAG CYAN GREY
@@ -79,9 +85,6 @@ main() {
     "u"|"unpack")
       shift
       unpackCommand "$@" ;;
-    "c"|"check")
-      shift
-      checkCommand "$@" ;;
     "d"|"debug")
       shift
       debugCommand "$@" ;;
@@ -94,7 +97,72 @@ main() {
 }
 
 ###############################################################################
+# Commands
+###############################################################################
 
+# Run RPMBuilder to create RPM package from SPEC file
+#
+# 1: Docker image (string)
+# 2: Path to SPEC file (string)
+#
+# Code: No
+# Echo: Yes
+packCommand() {
+  runProgram "/usr/bin/rpmbuilder" "$@"
+}
+
+# Run RPMUnBuilder to unpack SRPM archive to the current directory
+#
+# 1: Docker image (string)
+# 2: Path to SRPM file (string)
+#
+# Code: No
+# Echo: Yes
+unpackCommand() {
+  runProgram "/usr/bin/rpmunbuilder" "$@"
+}
+
+# Run docker container in path with SPEC file
+#
+# 1: Docker image (string)
+# 2: Path to SPEC file (string) [Optional]
+#
+# Code: No
+# Echo: Yes
+debugCommand() {
+  runProgram "/bin/bash" "$@"
+}
+
+# Print help message
+#
+# *: Command args (string)
+#
+# Code: No
+# Echo: Yes
+helpCommand() {
+  if [[ -z "$1" ]] ; then
+    usage
+    doExit
+  fi
+
+  case $1 in
+    "p"|"pack")              usagePack "$@" ;;
+    "u"|"unpack")            usageUnpack "$@" ;;
+    "d"|"debug")             usageDebug "$@" ;;
+    "h"|"help")              usageHelp ;;
+    *) show "Unknown command ${CL_CYAN}$1${CL_NORM}." ;;
+  esac
+}
+
+###############################################################################
+
+# Print message without new line symbol to console
+#
+# 1: Message (String)
+# 2: Color (Number) [Optional]
+#
+# Code: No
+# Echo: No
 show() {
   if [[ -n "$2" && -z "$no_colors" ]] ; then
     echo -e "\033[${2}m${1}\033[0m"
@@ -103,6 +171,12 @@ show() {
   fi
 }
 
+# Check packages if is installed
+#
+# *: List of dependencies to check
+#
+# Code: No
+# Echo: No
 checkDeps () {
   for app in "$@" ; do
     type "$app" &> /dev/null
@@ -112,6 +186,61 @@ checkDeps () {
   return 0
 }
 
+# Create Docker container and run command. Destroy container after exit.
+#
+# *: List of commands
+#
+# Code: No
+# Echo: Yes
+execDocker() {
+  docker run -e LOCAL_USER_ID="$(id -u)" --rm -it ${@}
+}
+
+# Run command with RPM spec file
+#
+# Code: No
+# Echo: No
+runProgram() {
+  local dockerImage
+  local execBinary
+  local specPath
+  local specDir
+  local specName
+  local extraArgs
+
+  execBinary="${1}"
+  dockerImage="${2}"
+  specPath="${3}"
+
+  if [[ -f "$specPath" ]] ; then
+      specDir="$(cd "$(dirname "$specPath")" && pwd -P)"
+      specName=$(basename "$specPath")
+  else
+      specDir=$(pwd -P)
+      specName=""
+  fi
+
+  shift 2
+
+  if [[ "$specPath" == *rpm ]] ; then
+    extraArgs="."
+  else
+    extraArgs=$*
+  fi
+
+  execDocker -v "$specDir":/rpmbuilder \
+            "$dockerImage" \
+            "$execBinary" \
+            "$specName" \
+            "$extraArgs"
+}
+
+# Do exit
+#
+# 1: Exit code (Number) [Optional]
+#
+# Code: No
+# Echo: No
 doExit() {
   exit "${1-0}"
 }
@@ -120,6 +249,10 @@ doExit() {
 # Usage
 ###############################################################################
 
+# Print about
+#
+# Code: No
+# Echo: Yes
 about() {
   show ""
   show "${CL_BL_CYAN}$APP${CL_NORM} ${CL_CYAN}$VER${CL_NORM} - Docker-based RPM building utility"
@@ -129,6 +262,10 @@ about() {
   show ""
 }
 
+# Print usage
+#
+# Code: No
+# Echo: Yes
 usage() {
   show ""
   show "${CL_BOLD}Usage:${CL_NORM} $APP ${CL_BROWN}command${CL_NORM} ${CL_BROWN}image${CL_NORM} ${CL_BROWN}source${CL_NORM} ${CL_GREEN}<option>${CL_NORM}"
@@ -137,7 +274,6 @@ usage() {
   show ""
   show "  ${CL_BROWN}p${CL_NORM} or ${CL_BROWN}pack${CL_NORM}             Create RPM package from spec file"
   show "  ${CL_BROWN}u${CL_NORM} or ${CL_BROWN}unpack${CL_NORM}           Unpack source files from SRPM package"
-  show "  ${CL_BROWN}c${CL_NORM} or ${CL_BROWN}check${CL_NORM}            Validate spec file using RPMLint"
   show "  ${CL_BROWN}d${CL_NORM} or ${CL_BROWN}debug${CL_NORM}            Run shell command instead of RPMBuilder"
   show "  ${CL_BROWN}h${CL_NORM} or ${CL_BROWN}help${CL_NORM}             Show detailed information about command"
   show ""
@@ -147,11 +283,14 @@ usage() {
   show ""
   show "  $APP pack rpmbuilder:6 htop.spec -V -1"
   show "  $APP unpack rpmbuilder:7 htop-2.0.2-0.el7.src.rpm"
-  show "  $APP check rpmbuilder:6 htop.spec"
   show "  $APP debug rpmbuilder:6 htop.spec"
   show ""
 }
 
+# Print usage for `pack` command
+#
+# Code: No
+# Echo: Yes
 usagePack() {
   show ""
   show "${CL_BOLD}Usage:${CL_NORM} $APP pack <image> <spec> <options>"
@@ -164,6 +303,10 @@ usagePack() {
   show ""
 }
 
+# Print usage for `unpack` command
+#
+# Code: No
+# Echo: Yes
 usageUnpack() {
   show ""
   show "${CL_BOLD}Usage:${CL_NORM} $APP unpack <image> <srpm>"
@@ -176,18 +319,10 @@ usageUnpack() {
   show ""
 }
 
-usageCheck() {
-  show ""
-  show "${CL_BOLD}Usage:${CL_NORM} $APP check <image> <spec>"
-  show ""
-  show "  Validate spec file using RPMLint."
-  show ""
-  show "${CL_BOLD}Examples:${CL_NORM}"
-  show ""
-  show "  $APP check rpmbuilder6 htop.spec"
-  show ""
-}
-
+# Print usage for `debug` command
+#
+# Code: No
+# Echo: Yes
 usageDebug() {
   show ""
   show "${CL_BOLD}Usage:${CL_NORM} $APP debug <image> <spec>"
@@ -200,122 +335,12 @@ usageDebug() {
   show ""
 }
 
+# Print usage for `help` command
+#
+# Code: No
+# Echo: Yes
 usageHelp() {
   show "\nNothing interesting here.\n"
-}
-
-###############################################################################
-# Commands
-###############################################################################
-
-dockerRun() {
-  docker run -e LOCAL_USER_ID="$(id -u)" --rm -it "$@"
-}
-
-packCommand() {
-  local img
-  local specpath
-  local specdir
-  local specname
-  local rpmb_img
-
-  img="${1}"
-  specpath="${2}"
-  specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
-  specname=$(basename "$specpath")
-  shift 2
-
-  rpmb_img="${img}"
-
-  dockerRun -v "$specdir":/rpmbuilder \
-            "$rpmb_img" \
-            "/usr/bin/rpmbuilder" \
-            "$specname" \
-            "$@" 
-}
-
-debugCommand() {
-  local img
-  local specpath
-  local specdir
-  local specname
-  local rpmb_img
-
-  img="${1}"
-  specpath="${2:-.}"
-  specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
-  specname=$(basename "$specpath")
-  shift 2
-
-  rpmb_img="${img}"
-
-  dockerRun -v "$specdir":/rpmbuilder \
-            "$rpmb_img" \
-            "/bin/bash"
-}
-
-unpackCommand() {
-  local img
-  local srpmpath
-  local srpmdir
-  local srpmname
-  shift 2
-
-  local unrpmb_img
-  local unrpmb_args
-
-  img="${1}"
-  srpmpath="${2}"
-  srpmdir="$(cd "$(dirname "$srpmpath")" && pwd -P)"
-  srpmname=$(basename "$srpmpath")
-  shift 2
-
-  unrpmb_img="${img}"
-  unrpmb_args="."
-
-  dockerRun -v "$srpmdir":/rpmbuilder \
-            "$unrpmb_img" \
-            "/usr/bin/rpmunbuilder" \
-            "$srpmname" \
-            "$unrpmb_args"
-}
-
-checkCommand() {
-  local img
-  local specpath
-  local specdir
-  local specname
-  local rpmlint_img
-
-  img="${1}"
-  specpath="${2}"
-  specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
-  specname=$(basename "$specpath")
-  shift 2
-
-  rpmlint_img="${img}"
-
-  dockerRun -v "$specdir":/rpmbuilder \
-            "$rpmlint_img" \
-            "/usr/bin/rpmlint" \
-            "$specname" \
-            "$@"
-}
-
-helpCommand() {
-  if [[ -z "$1" ]] ; then
-    usage
-    doExit
-  fi
-
-  case $1 in
-    "p"|"pack")              usagePack "$@" ;;
-    "u"|"unpack")            usageUnpack "$@" ;;
-    "c"|"check")             usageCheck "$@" ;;
-    "d"|"debug")             usageDebug "$@" ;;
-    "h"|"help")              usageHelp ;;
-    *) show "Unknown command ${CL_CYAN}$1${CL_NORM}." ;;
-  esac
 }
 
 ###############################################################################
