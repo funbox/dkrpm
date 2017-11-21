@@ -3,7 +3,7 @@
 ###############################################################################
 
 APP="dkrpm"
-VER="1.4.0"
+VER="1.4.1"
 
 ###############################################################################
 
@@ -52,6 +52,12 @@ CL_BG_GREY="\033[${GREY};7m"
 
 ###############################################################################
 
+# Main function
+#
+# *: All unparsed argumens
+#
+# Code: No
+# Echo: No
 main() {
   if [[ ! -t 1 || -n "$no_colors" ]] ; then
     unset NORM BOLD UNLN RED GREEN BROWN BLUE MAG CYAN GREY
@@ -94,124 +100,16 @@ main() {
 }
 
 ###############################################################################
-
-show() {
-  if [[ -n "$2" && -z "$no_colors" ]] ; then
-    echo -e "\033[${2}m${1}\033[0m"
-  else
-    echo -e "$1"
-  fi
-}
-
-checkDeps () {
-  for app in "$@" ; do
-    type "$app" &> /dev/null
-    [[ $? -eq 1 ]] && return 1
-  done
-
-  return 0
-}
-
-doExit() {
-  exit "${1-0}"
-}
-
-###############################################################################
-# Usage
-###############################################################################
-
-about() {
-  show ""
-  show "${CL_BL_CYAN}$APP${CL_NORM} ${CL_CYAN}$VER${CL_NORM} - Docker-based RPM building utility"
-  show ""
-  show "Copyright (C) 2009-2017 Gleb E Goncharov <inbox@gongled.ru>" $GREY
-  show "MIT" $GREY
-  show ""
-}
-
-usage() {
-  show ""
-  show "${CL_BOLD}Usage:${CL_NORM} $APP ${CL_BROWN}command${CL_NORM} ${CL_BROWN}image${CL_NORM} ${CL_BROWN}source${CL_NORM} ${CL_GREEN}<option>${CL_NORM}"
-  show ""
-  show "${CL_BOLD}Commands:${CL_NORM}"
-  show ""
-  show "  ${CL_BROWN}p${CL_NORM} or ${CL_BROWN}pack${CL_NORM}             Create RPM package from spec file"
-  show "  ${CL_BROWN}u${CL_NORM} or ${CL_BROWN}unpack${CL_NORM}           Unpack source files from SRPM package"
-  show "  ${CL_BROWN}c${CL_NORM} or ${CL_BROWN}check${CL_NORM}            Validate spec file using RPMLint"
-  show "  ${CL_BROWN}d${CL_NORM} or ${CL_BROWN}debug${CL_NORM}            Run shell command instead of RPMBuilder"
-  show "  ${CL_BROWN}h${CL_NORM} or ${CL_BROWN}help${CL_NORM}             Show detailed information about command"
-  show ""
-  show "See \"$APP help ${CL_BROWN}<command>${CL_NORM}\" for information on a specific command."
-  show ""
-  show "${CL_BOLD}Examples:${CL_NORM}"
-  show ""
-  show "  $APP pack rpmbuilder:6 htop.spec -V -1"
-  show "  $APP unpack rpmbuilder:7 htop-2.0.2-0.el7.src.rpm"
-  show "  $APP check rpmbuilder:6 htop.spec"
-  show "  $APP debug rpmbuilder:6 htop.spec"
-  show ""
-}
-
-usagePack() {
-  show ""
-  show "${CL_BOLD}Usage:${CL_NORM} $APP pack <image> <spec> <options>"
-  show ""
-  show "  Create RPM package from spec file."
-  show ""
-  show "${CL_BOLD}Examples:${CL_NORM}"
-  show ""
-  show "  $APP pack rpmbuilder6 htop.spec -V -1"
-  show ""
-}
-
-usageUnpack() {
-  show ""
-  show "${CL_BOLD}Usage:${CL_NORM} $APP unpack <image> <srpm>"
-  show ""
-  show "  Unpack source files from SRPM package."
-  show ""
-  show "${CL_BOLD}Examples:${CL_NORM}"
-  show ""
-  show "  $APP unpack rpmbuilder6 htop-2.0.2-0.el7.src.rpm"
-  show ""
-}
-
-usageCheck() {
-  show ""
-  show "${CL_BOLD}Usage:${CL_NORM} $APP check <image> <spec>"
-  show ""
-  show "  Validate spec file using RPMLint."
-  show ""
-  show "${CL_BOLD}Examples:${CL_NORM}"
-  show ""
-  show "  $APP check rpmbuilder6 htop.spec"
-  show ""
-}
-
-usageDebug() {
-  show ""
-  show "${CL_BOLD}Usage:${CL_NORM} $APP debug <image> <spec>"
-  show ""
-  show "  Run shell instead of RPMBuilder."
-  show ""
-  show "${CL_BOLD}Examples:${CL_NORM}"
-  show ""
-  show "  $APP debug rpmbuilder6 htop.spec"
-  show ""
-}
-
-usageHelp() {
-  show "\nNothing interesting here.\n"
-}
-
-###############################################################################
 # Commands
 ###############################################################################
 
-dockerRun() {
-  docker run -e LOCAL_USER_ID="$(id -u)" --rm -it "$@"
-}
-
+# Run RPMBuilder to create RPM package from SPEC file
+#
+# 1: Docker image (string)
+# 2: Path to SPEC file (string)
+#
+# Code: No
+# Echo: Yes
 packCommand() {
   local img
   local specpath
@@ -238,36 +136,16 @@ packCommand() {
             "$rpmb_img" \
             "/usr/bin/rpmbuilder" \
             "$specname" \
-            "$@" 
+            "$@"
 }
 
-debugCommand() {
-  local img
-  local specpath
-  local specdir
-  local specname
-  local rpmb_img
-
-  img="${1}"
-  specpath="${2:-.}"
-
-  if [[ -f "$specpath" ]] ; then
-      specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
-      specname=$(basename "$specpath")
-  else
-      specdir=$(pwd -P)
-      specname="$specpath"
-  fi
-
-  shift 2
-
-  rpmb_img="${img}"
-
-  dockerRun -v "$specdir":/rpmbuilder \
-            "$rpmb_img" \
-            "/bin/bash"
-}
-
+# Run RPMUnBuilder to unpack SRPM archive to the current directory
+#
+# 1: Docker image (string)
+# 2: Path to SRPM file (string)
+#
+# Code: No
+# Echo: Yes
 unpackCommand() {
   local img
   local srpmpath
@@ -294,6 +172,13 @@ unpackCommand() {
             "$unrpmb_args"
 }
 
+# Run RPMLint to check validity of SPEC file
+#
+# 1: Docker image (string)
+# 2: Path to SPEC file (string)
+#
+# Code: No
+# Echo: Yes
 checkCommand() {
   local img
   local specpath
@@ -323,6 +208,46 @@ checkCommand() {
             "$@"
 }
 
+# Run docker container in path with SPEC file
+#
+# 1: Docker image (string)
+# 2: Path to SPEC file (string) [Optional]
+#
+# Code: No
+# Echo: Yes
+debugCommand() {
+  local img
+  local specpath
+  local specdir
+  local specname
+  local rpmb_img
+
+  img="${1}"
+  specpath="${2:-.}"
+
+  if [[ -f "$specpath" ]] ; then
+      specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
+      specname=$(basename "$specpath")
+  else
+      specdir=$(pwd -P)
+      specname="$specpath"
+  fi
+
+  shift 2
+
+  rpmb_img="${img}"
+
+  dockerRun -v "$specdir":/rpmbuilder \
+            "$rpmb_img" \
+            "/bin/bash"
+}
+
+# Print help message
+#
+# -
+#
+# Code: No
+# Echo: Yes
 helpCommand() {
   if [[ -z "$1" ]] ; then
     usage
@@ -337,6 +262,188 @@ helpCommand() {
     "h"|"help")              usageHelp ;;
     *) show "Unknown command ${CL_CYAN}$1${CL_NORM}." ;;
   esac
+}
+
+###############################################################################
+
+# Print message without new line symbol to console
+#
+# 1: Message (String)
+# 2: Color (Number) [Optional]
+#
+# Code: No
+# Echo: No
+show() {
+  if [[ -n "$2" && -z "$no_colors" ]] ; then
+    echo -e "\033[${2}m${1}\033[0m"
+  else
+    echo -e "$1"
+  fi
+}
+
+# Check packages if is installed
+#
+# *: List of dependencies to check
+#
+# Code: No
+# Echo: No
+checkDeps () {
+  for app in "$@" ; do
+    type "$app" &> /dev/null
+    [[ $? -eq 1 ]] && return 1
+  done
+
+  return 0
+}
+
+# Create Docker container and run command. Destroy container after exit.
+#
+# *: List of commands
+#
+# Code: No
+# Echo: Yes
+dockerRun() {
+  docker run -e LOCAL_USER_ID="$(id -u)" --rm -it "$@"
+}
+
+# Do exit
+#
+# 1: Exit code (Number) [Optional]
+#
+# Code: No
+# Echo: No
+doExit() {
+  exit "${1-0}"
+}
+
+###############################################################################
+# Usage
+###############################################################################
+
+# Print about
+#
+# -
+#
+# Code: No
+# Echo: Yes
+about() {
+  show ""
+  show "${CL_BL_CYAN}$APP${CL_NORM} ${CL_CYAN}$VER${CL_NORM} - Docker-based RPM building utility"
+  show ""
+  show "Copyright (C) 2009-2017 Gleb E Goncharov <inbox@gongled.ru>" $GREY
+  show "MIT" $GREY
+  show ""
+}
+
+# Print usage
+#
+# -
+#
+# Code: No
+# Echo: Yes
+usage() {
+  show ""
+  show "${CL_BOLD}Usage:${CL_NORM} $APP ${CL_BROWN}command${CL_NORM} ${CL_BROWN}image${CL_NORM} ${CL_BROWN}source${CL_NORM} ${CL_GREEN}<option>${CL_NORM}"
+  show ""
+  show "${CL_BOLD}Commands:${CL_NORM}"
+  show ""
+  show "  ${CL_BROWN}p${CL_NORM} or ${CL_BROWN}pack${CL_NORM}             Create RPM package from spec file"
+  show "  ${CL_BROWN}u${CL_NORM} or ${CL_BROWN}unpack${CL_NORM}           Unpack source files from SRPM package"
+  show "  ${CL_BROWN}c${CL_NORM} or ${CL_BROWN}check${CL_NORM}            Validate spec file using RPMLint"
+  show "  ${CL_BROWN}d${CL_NORM} or ${CL_BROWN}debug${CL_NORM}            Run shell command instead of RPMBuilder"
+  show "  ${CL_BROWN}h${CL_NORM} or ${CL_BROWN}help${CL_NORM}             Show detailed information about command"
+  show ""
+  show "See \"$APP help ${CL_BROWN}<command>${CL_NORM}\" for information on a specific command."
+  show ""
+  show "${CL_BOLD}Examples:${CL_NORM}"
+  show ""
+  show "  $APP pack rpmbuilder:6 htop.spec -V -1"
+  show "  $APP unpack rpmbuilder:7 htop-2.0.2-0.el7.src.rpm"
+  show "  $APP check rpmbuilder:6 htop.spec"
+  show "  $APP debug rpmbuilder:6 htop.spec"
+  show ""
+}
+
+# Print usage for `pack` command
+#
+# -
+#
+# Code: No
+# Echo: Yes
+usagePack() {
+  show ""
+  show "${CL_BOLD}Usage:${CL_NORM} $APP pack <image> <spec> <options>"
+  show ""
+  show "  Create RPM package from spec file."
+  show ""
+  show "${CL_BOLD}Examples:${CL_NORM}"
+  show ""
+  show "  $APP pack rpmbuilder6 htop.spec -V -1"
+  show ""
+}
+
+# Print usage for `unpack` command
+#
+# -
+#
+# Code: No
+# Echo: Yes
+usageUnpack() {
+  show ""
+  show "${CL_BOLD}Usage:${CL_NORM} $APP unpack <image> <srpm>"
+  show ""
+  show "  Unpack source files from SRPM package."
+  show ""
+  show "${CL_BOLD}Examples:${CL_NORM}"
+  show ""
+  show "  $APP unpack rpmbuilder6 htop-2.0.2-0.el7.src.rpm"
+  show ""
+}
+
+# Print usage for `check` command
+#
+# -
+#
+# Code: No
+# Echo: Yes
+usageCheck() {
+  show ""
+  show "${CL_BOLD}Usage:${CL_NORM} $APP check <image> <spec>"
+  show ""
+  show "  Validate spec file using RPMLint."
+  show ""
+  show "${CL_BOLD}Examples:${CL_NORM}"
+  show ""
+  show "  $APP check rpmbuilder6 htop.spec"
+  show ""
+}
+
+# Print usage for `debug` command
+#
+# -
+#
+# Code: No
+# Echo: Yes
+usageDebug() {
+  show ""
+  show "${CL_BOLD}Usage:${CL_NORM} $APP debug <image> <spec>"
+  show ""
+  show "  Run shell instead of RPMBuilder."
+  show ""
+  show "${CL_BOLD}Examples:${CL_NORM}"
+  show ""
+  show "  $APP debug rpmbuilder6 htop.spec"
+  show ""
+}
+
+# Print usage for `help` command
+#
+# -
+#
+# Code: No
+# Echo: Yes
+usageHelp() {
+  show "\nNothing interesting here.\n"
 }
 
 ###############################################################################
