@@ -60,7 +60,6 @@ Commands:
 
   p or pack             Create RPM package from spec file
   u or unpack           Unpack source files from SRPM package
-  c or check            Validate spec file using RPMLint
   d or debug            Run shell command instead of RPMBuilder
   h or help             Show detailed information about command
 
@@ -70,7 +69,6 @@ Examples:
 
   dkrpm pack rpmbuilder:6 htop.spec -V -1
   dkrpm unpack rpmbuilder:7 htop-2.0.2-0.el7.src.rpm
-  dkrpm check rpmbuilder:6 htop.spec
   dkrpm debug rpmbuilder:6 htop.spec
 ```
 
