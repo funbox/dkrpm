@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Ignore errors for shellcheck linter
-export SHELLCHECK_OPTS="-e SC2059 -e SC2034 -e SC1090 -e SC2154"
+export SHELLCHECK_OPTS="-e SC2059 -e SC2034 -e SC1090 -e SC2154 -e SC2068"
 
 # Run linter
 if type shellcheck &>/dev/null ; then
