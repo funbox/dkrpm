@@ -244,7 +244,7 @@ debugCommand() {
 
 # Print help message
 #
-# -
+# *: Command args (string)
 #
 # Code: No
 # Echo: Yes
@@ -322,8 +322,6 @@ doExit() {
 
 # Print about
 #
-# -
-#
 # Code: No
 # Echo: Yes
 about() {
@@ -336,8 +334,6 @@ about() {
 }
 
 # Print usage
-#
-# -
 #
 # Code: No
 # Echo: Yes
@@ -366,8 +362,6 @@ usage() {
 
 # Print usage for `pack` command
 #
-# -
-#
 # Code: No
 # Echo: Yes
 usagePack() {
@@ -383,8 +377,6 @@ usagePack() {
 }
 
 # Print usage for `unpack` command
-#
-# -
 #
 # Code: No
 # Echo: Yes
@@ -402,8 +394,6 @@ usageUnpack() {
 
 # Print usage for `check` command
 #
-# -
-#
 # Code: No
 # Echo: Yes
 usageCheck() {
@@ -420,8 +410,6 @@ usageCheck() {
 
 # Print usage for `debug` command
 #
-# -
-#
 # Code: No
 # Echo: Yes
 usageDebug() {
@@ -437,8 +425,6 @@ usageDebug() {
 }
 
 # Print usage for `help` command
-#
-# -
 #
 # Code: No
 # Echo: Yes
