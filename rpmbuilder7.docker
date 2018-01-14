@@ -25,7 +25,7 @@ RUN yum -y -q install sudo rpmbuilder git make which && \
 RUN curl -o /usr/local/bin/gosu -sSL "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-amd64" \
     && chmod +x /usr/local/bin/gosu
 
-COPY SOURCES/rpmbuilder6/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY SOURCES/rpmbuilder7/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 VOLUME /rpmbuilder
