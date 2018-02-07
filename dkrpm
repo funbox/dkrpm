@@ -285,7 +285,7 @@ checkCommand() {
   local specpath
   local specdir
   local specname
-  local rpmlint_img
+  local perfecto_img
 
   img="${1}"
   specpath="${2}"
@@ -293,11 +293,11 @@ checkCommand() {
   specname=$(basename "$specpath")
   shift 2
 
-  rpmlint_img="${img}"
+  perfecto_img="${img}"
 
   dockerRun -v "$specdir":/rpmbuilder \
-            "$rpmlint_img" \
-            "/usr/bin/rpmlint" \
+            "$perfecto_img" \
+            "/usr/bin/perfecto" \
             "$specname" \
             "$@"
 }
