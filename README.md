@@ -60,7 +60,7 @@ Commands:
 
   p or pack             Create RPM package from spec file
   u or unpack           Unpack source files from SRPM package
-  c or check            Validate spec file using RPMLint
+  c or check            Validate spec file using Perfecto
   d or debug            Run shell command instead of RPMBuilder
   h or help             Show detailed information about command
 

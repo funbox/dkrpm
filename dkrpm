@@ -3,7 +3,7 @@
 ###############################################################################
 
 APP="dkrpm"
-VER="1.4.0"
+VER="1.5.0"
 
 ###############################################################################
 
@@ -137,7 +137,7 @@ usage() {
   show ""
   show "  ${CL_BROWN}p${CL_NORM} or ${CL_BROWN}pack${CL_NORM}             Create RPM package from spec file"
   show "  ${CL_BROWN}u${CL_NORM} or ${CL_BROWN}unpack${CL_NORM}           Unpack source files from SRPM package"
-  show "  ${CL_BROWN}c${CL_NORM} or ${CL_BROWN}check${CL_NORM}            Validate spec file using RPMLint"
+  show "  ${CL_BROWN}c${CL_NORM} or ${CL_BROWN}check${CL_NORM}            Validate spec file using Perfecto"
   show "  ${CL_BROWN}d${CL_NORM} or ${CL_BROWN}debug${CL_NORM}            Run shell command instead of RPMBuilder"
   show "  ${CL_BROWN}h${CL_NORM} or ${CL_BROWN}help${CL_NORM}             Show detailed information about command"
   show ""
@@ -180,7 +180,7 @@ usageCheck() {
   show ""
   show "${CL_BOLD}Usage:${CL_NORM} $APP check <image> <spec>"
   show ""
-  show "  Validate spec file using RPMLint."
+  show "  Validate spec file using Perfecto."
   show ""
   show "${CL_BOLD}Examples:${CL_NORM}"
   show ""
