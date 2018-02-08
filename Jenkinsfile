@@ -11,8 +11,10 @@ pipeline {
         }
 
         stage('Build') {
+            when {
+                branch 'master'
+            }
             steps {
-                sh 'make clean'
                 sh 'make build'
             }
         }
@@ -23,6 +25,15 @@ pipeline {
             }
             steps {
                 sh 'make deploy'
+            }
+        }
+
+        stage('Clean') {
+            when {
+                branch 'master'
+            }
+            steps {
+                sh 'make clean'
             }
         }
     }
