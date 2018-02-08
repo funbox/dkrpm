@@ -20,8 +20,8 @@ deploy-rpmbuilder%:
 	docker push gongled/rpmbuilder:$(*F)
 
 clean-rpmbuilder%:
-	docker rmi gongled/rpmbuilder:$(*F)
-	docker rmi rpmbuilder:$(*F)
+	docker rmi -f gongled/rpmbuilder:$(*F)
+	docker rmi -f rpmbuilder:$(*F)
 
 install:
 	cp -f dkrpm /usr/bin/dkrpm
