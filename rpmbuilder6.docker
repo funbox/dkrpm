@@ -4,7 +4,7 @@ LABEL name="CentOS 6.x RPMBuilder Image" \
       license="MIT" \
       vendor="GONGLED" \
       maintainer="Gleb E Goncharov" \
-      build-date="2017-08-24"
+      build-date="2018-02-08"
 
 ###############################################################################
 
