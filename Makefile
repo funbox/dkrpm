@@ -1,20 +1,27 @@
 ########################################################################################
 
-TARGETS = rpmbuilder6 rpmbuilder7
+.PHONY = all build clean deploy install uninstall test
 
 ########################################################################################
 
-.PHONY = all build install uninstall test
+all: build test
 
-########################################################################################
+build: build-rpmbuilder6 build-rpmbuilder7
 
-all: $(TARGETS) build test
+deploy: deploy-rpmbuilder6 build-rpmbuilder7
 
-build:
-	@echo 'Nothing to build'
+clean: clean-rpmbuilder6 clean-rpmbuilder7
 
-rpmbuilder%:
-	docker build -f $@.docker -t rpmbuilder:$(*F) .
+build-rpmbuilder%:
+	docker build -f rpmbuilder$(*F).docker -t rpmbuilder:$(*F) .
+	docker tag rpmbuilder:$(*F) gongled/rpmbuilder:$(*F) 
+
+deploy-rpmbuilder%:
+	docker push gongled/rpmbuilder:$(*F)
+
+clean-rpmbuilder%:
+	docker rmi gongled/rpmbuilder:$(*F)
+	docker rmi rpmbuilder:$(*F)
 
 install:
 	cp -f dkrpm /usr/bin/dkrpm
