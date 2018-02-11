@@ -259,19 +259,21 @@ unpackCommand() {
   local srpmpath
   local srpmdir
   local srpmname
-  shift 2
-
-  local unrpmb_img
-  local unrpmb_args
 
   img="${1}"
   srpmpath="${2}"
   srpmdir="$(cd "$(dirname "$srpmpath")" && pwd -P)"
   srpmname=$(basename "$srpmpath")
+
   shift 2
+
+  local unrpmb_img
+  local unrpmb_args
 
   unrpmb_img="${img}"
   unrpmb_args="."
+
+  shift 2
 
   dockerRun -v "$srpmdir":/rpmbuilder \
             "$unrpmb_img" \
