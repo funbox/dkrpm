@@ -20,7 +20,7 @@ RUN yum -y -q install https://yum.kaos.io/6/release/i386/kaos-repo-$KAOS_REPO_VE
     yum -y -q update && \
     yum -y -q clean all
 
-RUN yum -y -q install sudo rpmbuilder make which rpmlint perfecto && \
+RUN yum -y -q --enablerepo=kaos-testing install sudo rpmbuilder make which rpmlint perfecto && \
     yum -y -q clean all
 
 RUN curl -o /usr/local/bin/gosu -sSL "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-amd64" \

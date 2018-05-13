@@ -8,7 +8,7 @@ all: build test
 
 build: build-rpmbuilder6 build-rpmbuilder7
 
-deploy: deploy-rpmbuilder6 build-rpmbuilder7
+deploy: deploy-rpmbuilder6 deploy-rpmbuilder7
 
 clean: clean-rpmbuilder6 clean-rpmbuilder7
 
