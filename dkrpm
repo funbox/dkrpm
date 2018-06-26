@@ -3,7 +3,7 @@
 ###############################################################################
 
 APP="dkrpm"
-VER="1.5.0"
+VER="1.5.1"
 
 ###############################################################################
 
@@ -90,7 +90,7 @@ main() {
       helpCommand "$@" ;;
   esac
 
-  doExit
+  doExit $?
 }
 
 ###############################################################################
@@ -210,6 +210,7 @@ usageHelp() {
 
 dockerRun() {
   docker run -e LOCAL_USER_ID="$(id -u)" --rm -it "$@"
+  return $?
 }
 
 packCommand() {
@@ -232,6 +233,8 @@ packCommand() {
             "/usr/bin/rpmbuilder" \
             "$specname" \
             "$@" 
+
+  return $?
 }
 
 debugCommand() {
@@ -252,6 +255,8 @@ debugCommand() {
   dockerRun -v "$specdir":/rpmbuilder \
             "$rpmb_img" \
             "/bin/bash"
+
+  return $?
 }
 
 unpackCommand() {
@@ -278,6 +283,8 @@ unpackCommand() {
             "/usr/bin/rpmunbuilder" \
             "$srpmname" \
             "$unrpmb_args"
+
+  return $?
 }
 
 checkCommand() {
@@ -300,6 +307,8 @@ checkCommand() {
             "/usr/bin/perfecto" \
             "$specname" \
             "$@"
+
+  return $?
 }
 
 helpCommand() {
