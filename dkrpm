@@ -52,6 +52,7 @@ CL_BG_GREY="\033[${GREY};7m"
 
 ###############################################################################
 
+# Main entrypoint to program
 main() {
   if [[ ! -t 1 || -n "$no_colors" ]] ; then
     unset NORM BOLD UNLN RED GREEN BROWN BLUE MAG CYAN GREY
@@ -95,6 +96,12 @@ main() {
 
 ###############################################################################
 
+# Prints coloured message to terminal
+#
+# 1: Message (String)
+#
+# Code: No
+# Echo: No
 show() {
   if [[ -n "$2" && -z "$no_colors" ]] ; then
     echo -e "\033[${2}m${1}\033[0m"
@@ -103,6 +110,12 @@ show() {
   fi
 }
 
+# Checks if programs are installed
+#
+# *: List of programs (Array)
+#
+# Code: No
+# Echo: No
 checkDeps () {
   for app in "$@" ; do
     type "$app" &> /dev/null
@@ -112,6 +125,12 @@ checkDeps () {
   return 0
 }
 
+# Exits program with a given return code
+#
+# 1: Exit code (Integer)
+#
+# Code: No
+# Echo: No
 doExit() {
   exit "${1-0}"
 }
@@ -120,6 +139,10 @@ doExit() {
 # Usage
 ###############################################################################
 
+# Shows about message
+#
+# Code: No
+# Echo: No
 about() {
   show ""
   show "${CL_BL_CYAN}$APP${CL_NORM} ${CL_CYAN}$VER${CL_NORM} - Docker-based RPM building utility"
@@ -129,6 +152,10 @@ about() {
   show ""
 }
 
+# Shows usage message
+#
+# Code: No
+# Echo: No
 usage() {
   show ""
   show "${CL_BOLD}Usage:${CL_NORM} $APP ${CL_BROWN}command${CL_NORM} ${CL_BROWN}image${CL_NORM} ${CL_BROWN}source${CL_NORM} ${CL_GREEN}<option>${CL_NORM}"
@@ -152,6 +179,10 @@ usage() {
   show ""
 }
 
+# Shows usage 'pack' command message
+#
+# Code: No
+# Echo: No
 usagePack() {
   show ""
   show "${CL_BOLD}Usage:${CL_NORM} $APP pack <image> <spec> <options>"
@@ -164,6 +195,10 @@ usagePack() {
   show ""
 }
 
+# Shows usage 'unpack' command message
+#
+# Code: No
+# Echo: No
 usageUnpack() {
   show ""
   show "${CL_BOLD}Usage:${CL_NORM} $APP unpack <image> <srpm>"
@@ -176,6 +211,10 @@ usageUnpack() {
   show ""
 }
 
+# Shows usage 'check' command message
+#
+# Code: No
+# Echo: No
 usageCheck() {
   show ""
   show "${CL_BOLD}Usage:${CL_NORM} $APP check <image> <spec>"
@@ -188,6 +227,10 @@ usageCheck() {
   show ""
 }
 
+# Shows usage 'debug' command message
+#
+# Code: No
+# Echo: No
 usageDebug() {
   show ""
   show "${CL_BOLD}Usage:${CL_NORM} $APP debug <image> <spec>"
@@ -200,6 +243,10 @@ usageDebug() {
   show ""
 }
 
+# Shows usage 'help' command message
+#
+# Code: No
+# Echo: No
 usageHelp() {
   show "\nNothing interesting here.\n"
 }
