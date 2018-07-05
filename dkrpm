@@ -86,7 +86,10 @@ main() {
     "d"|"debug")
       shift
       debugCommand "$@" ;;
-    *|"h"|"help")
+    "h"|"help")
+      shift
+      helpCommand "$@" ;;
+    *)
       shift
       helpCommand "$@" ;;
   esac
