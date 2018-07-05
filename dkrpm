@@ -143,7 +143,7 @@ about() {
   show ""
   show "${CL_BL_CYAN}$APP${CL_NORM} ${CL_CYAN}$VER${CL_NORM} - Docker-based RPM building utility"
   show ""
-  show "Copyright (C) 2009-2017 Gleb E Goncharov <inbox@gongled.ru>" $GREY
+  show "Copyright (C) 2009-$(date +%Y) Gleb E Goncharov <inbox@gongled.ru>" $GREY
   show "MIT" $GREY
   show ""
 }
