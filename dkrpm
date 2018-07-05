@@ -255,6 +255,12 @@ usageHelp() {
 # Commands
 ###############################################################################
 
+# Runs docker container with given command
+#
+# *: Commands (Array)
+#
+# Code: No
+# Echo: No
 dockerRun() {
   docker run -e LOCAL_USER_ID="$(id -u)" --rm -it "$@"
   return $?
