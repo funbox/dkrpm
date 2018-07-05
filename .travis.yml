@@ -12,7 +12,8 @@ before_install:
 
 env:
   global:
+    - SHELLCHECK_PATH='./shellcheck-latest/shellcheck'
     - SHELLCHECK_OPTS='-e SC2034 -e SC2181 -e SC2015 -e SC2154 -e SC1117'
 
 script:
- - bash -c 'shopt -s globstar; ./shellcheck-latest/shellcheck dkrpm'
+  - make test
