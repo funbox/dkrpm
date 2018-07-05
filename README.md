@@ -4,10 +4,6 @@ Dockerized RPM building tool for any platforms based on [RPMBuilder](https://git
 
 <p align="center"><a href="#demo">Demo</a> • <a href="#requirements">Requirements</a> • <a href="#getting-started">Getting started</a> • <a href="#prebuilt-images">Prebuilt images</a> • <a href="#usage">Usage</a> • <a href="#shellcheck-status">ShellCheck Status</a> • <a href="#credits">Credits</a> • <a href="#license">License</a></p>
 
-## Demo
-
-[![asciicast](https://asciinema.org/a/134855.png)](https://asciinema.org/a/134855)
-
 ## Requirements
 
 - Docker
