@@ -1,9 +1,9 @@
-#! /usr/bin/env bash
+#!/usr/bin/env bash
 
 ###############################################################################
 
-APP="dkrpm"
-VER="1.5.0"
+APP=$(basename "$0")
+VER="1.6.0"
 
 ###############################################################################
 
@@ -52,6 +52,30 @@ CL_BG_GREY="\033[${GREY};7m"
 
 ###############################################################################
 
+# Path to shell inside container (for debugging)
+SHELL_PATH="${SHELL_PATH:-/bin/bash}"
+
+# Path to RPMBuilder utility inside container
+RPMBUILDER_PATH="${RPMBUILDER_PATH:-/usr/bin/rpmbuilder}"
+
+# Path to RPMUnbuilder utility inside container
+RPMUNBUILDER_PATH="${RPMUNBUILDER_PATH:-/usr/bin/rpmunbuilder}"
+
+# Path to Docker image with RPMBuilder utility
+DOCKER_RPMBUILDER_IMAGE="${DOCKER_RPMBUILDER_IMAGE:-gongled/rpmbuilder:7}"
+
+# Shared volume inside container for RPMBuilder/RPMUnbuilder
+DOCKER_RPMBUILDER_VOLUME="/rpmbuilder"
+
+# Path to Docker image with Perfecto utility
+DOCKER_PERFECTO_IMAGE="${DOCKER_PERFECTO_IMAGE:-essentialkaos/perfecto:centos7}"
+
+# Shared volume for linting specs inside Perfecto container
+DOCKER_PERFECTO_VOLUME="/perfecto"
+
+###############################################################################
+
+# Main entrypoint
 main() {
   if [[ ! -t 1 || -n "$no_colors" ]] ; then
     unset NORM BOLD UNLN RED GREEN BROWN BLUE MAG CYAN GREY
@@ -63,38 +87,19 @@ main() {
 
   [[ -n "$version" || -n "$ver" ]] && about && doExit
   [[ -n "$help" || -n "$usage" ]] && usage && doExit
-  [[ "$1" == "help" || "$1" == "h" ]] && helpCommand "$2" && doExit
 
-  if ! checkDeps "docker" ; then
-    show "For using $APP you must install 'docker' utility first." $RED
-    doExit 1
-  fi
-
-  local cmd="$1"
-
-  case $cmd in
-    "p"|"pack")
-      shift
-      packCommand "$@" ;;
-    "u"|"unpack")
-      shift
-      unpackCommand "$@" ;;
-    "c"|"check")
-      shift
-      checkCommand "$@" ;;
-    "d"|"debug")
-      shift
-      debugCommand "$@" ;;
-    *|"h"|"help")
-      shift
-      helpCommand "$@" ;;
-  esac
-
-  doExit
+  checkDocker
+  process "$@"
 }
 
 ###############################################################################
 
+# Prints coloured message to terminal
+#
+# 1: Message (String)
+#
+# Code: No
+# Echo: No
 show() {
   if [[ -n "$2" && -z "$no_colors" ]] ; then
     echo -e "\033[${2}m${1}\033[0m"
@@ -103,6 +108,12 @@ show() {
   fi
 }
 
+# Checks if programs are installed
+#
+# *: List of programs (Array)
+#
+# Code: Yes
+# Echo: No
 checkDeps () {
   for app in "$@" ; do
     type "$app" &> /dev/null
@@ -112,26 +123,38 @@ checkDeps () {
   return 0
 }
 
+# Exits program with a given return code
+#
+# 1: Exit code (Integer)
+#
+# Code: Yes
+# Echo: No
 doExit() {
   exit "${1-0}"
 }
 
 ###############################################################################
-# Usage
-###############################################################################
 
+# Shows about message
+#
+# Code: No
+# Echo: Yes
 about() {
   show ""
   show "${CL_BL_CYAN}$APP${CL_NORM} ${CL_CYAN}$VER${CL_NORM} - Docker-based RPM building utility"
   show ""
-  show "Copyright (C) 2009-2017 Gleb E Goncharov <inbox@gongled.ru>" $GREY
+  show "Copyright (C) 2009-$(date +%Y) Gleb E Goncharov <inbox@gongled.ru>" $GREY
   show "MIT" $GREY
   show ""
 }
 
+# Shows usage message
+#
+# Code: No
+# Echo: Yes
 usage() {
   show ""
-  show "${CL_BOLD}Usage:${CL_NORM} $APP ${CL_BROWN}command${CL_NORM} ${CL_BROWN}image${CL_NORM} ${CL_BROWN}source${CL_NORM} ${CL_GREEN}<option>${CL_NORM}"
+  show "${CL_BOLD}Usage:${CL_NORM} $APP ${CL_BROWN}command${CL_NORM} ${CL_BROWN}source${CL_NORM} ${CL_GREEN}<options>${CL_NORM}"
   show ""
   show "${CL_BOLD}Commands:${CL_NORM}"
   show ""
@@ -145,179 +168,287 @@ usage() {
   show ""
   show "${CL_BOLD}Examples:${CL_NORM}"
   show ""
-  show "  $APP pack rpmbuilder:6 htop.spec -V -1"
-  show "  $APP unpack rpmbuilder:7 htop-2.0.2-0.el7.src.rpm"
-  show "  $APP check rpmbuilder:6 htop.spec"
-  show "  $APP debug rpmbuilder:6 htop.spec"
+  show "  $APP pack htop.spec -V -1"
+  show "  $APP unpack htop-2.0.2-0.el7.src.rpm"
+  show "  $APP check htop.spec"
+  show "  $APP debug htop.spec"
   show ""
 }
 
+# Shows usage 'pack' command message
+#
+# Code: No
+# Echo: Yes
 usagePack() {
   show ""
-  show "${CL_BOLD}Usage:${CL_NORM} $APP pack <image> <spec> <options>"
+  show "${CL_BOLD}Usage:${CL_NORM} $APP pack <spec> <options>"
   show ""
   show "  Create RPM package from spec file."
   show ""
   show "${CL_BOLD}Examples:${CL_NORM}"
   show ""
-  show "  $APP pack rpmbuilder6 htop.spec -V -1"
+  show "  $APP pack htop.spec -V -1"
   show ""
 }
 
+# Shows usage 'unpack' command message
+#
+# Code: No
+# Echo: Yes
 usageUnpack() {
   show ""
-  show "${CL_BOLD}Usage:${CL_NORM} $APP unpack <image> <srpm>"
+  show "${CL_BOLD}Usage:${CL_NORM} $APP unpack <srpm>"
   show ""
   show "  Unpack source files from SRPM package."
   show ""
   show "${CL_BOLD}Examples:${CL_NORM}"
   show ""
-  show "  $APP unpack rpmbuilder6 htop-2.0.2-0.el7.src.rpm"
+  show "  $APP unpack htop-2.0.2-0.el7.src.rpm"
   show ""
 }
 
+# Shows usage 'check' command message
+#
+# Code: No
+# Echo: Yes
 usageCheck() {
   show ""
-  show "${CL_BOLD}Usage:${CL_NORM} $APP check <image> <spec>"
+  show "${CL_BOLD}Usage:${CL_NORM} $APP check <spec>"
   show ""
   show "  Validate spec file using Perfecto."
   show ""
   show "${CL_BOLD}Examples:${CL_NORM}"
   show ""
-  show "  $APP check rpmbuilder6 htop.spec"
+  show "  $APP check htop.spec"
   show ""
 }
 
+# Shows usage 'debug' command message
+#
+# Code: No
+# Echo: Yes
 usageDebug() {
   show ""
-  show "${CL_BOLD}Usage:${CL_NORM} $APP debug <image> <spec>"
+  show "${CL_BOLD}Usage:${CL_NORM} $APP debug <spec>"
   show ""
   show "  Run shell instead of RPMBuilder."
   show ""
   show "${CL_BOLD}Examples:${CL_NORM}"
   show ""
-  show "  $APP debug rpmbuilder6 htop.spec"
+  show "  $APP debug htop.spec"
   show ""
 }
 
+# Shows usage 'help' command message
+#
+# Code: No
+# Echo: No
 usageHelp() {
   show "\nNothing interesting here.\n"
 }
 
 ###############################################################################
-# Commands
-###############################################################################
 
+# Checks if Docker is installed
+#
+# Code: Yes
+# Echo: Yes
+checkDocker() {
+    if ! checkDeps "docker" ; then
+        show "You must install docker first." $RED
+        doExit 1
+    fi
+}
+
+# Runs docker container with given command
+#
+# *: Commands (Array)
+#
+# Code: Yes
+# Echo: Yes
 dockerRun() {
   docker run -e LOCAL_USER_ID="$(id -u)" --rm -it "$@"
+
+  return $?
 }
 
+# Builds RPM from spec with RPMBuilder
+#
+# 1: Path to spec file (String) [Optional]
+#
+# Code: Yes
+# Echo: Yes
 packCommand() {
-  local img
-  local specpath
-  local specdir
-  local specname
-  local rpmb_img
+    local spec spec_dir spec_name
 
-  img="${1}"
-  specpath="${2}"
-  specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
-  specname=$(basename "$specpath")
-  shift 2
+    spec="$1"
 
-  rpmb_img="${img}"
+    if [[ -r "$spec" ]] ; then
+        spec_dir="$(cd "$(dirname "$spec")" && pwd -P)"
+        spec_name=$(basename "$spec")
+    fi
 
-  dockerRun -v "$specdir":/rpmbuilder \
-            "$rpmb_img" \
-            "/usr/bin/rpmbuilder" \
-            "$specname" \
-            "$@" 
+    if [[ -n "$spec_dir" ]] ; then
+        shift 1
+        dockerRun -v "$spec_dir":"$DOCKER_RPMBUILDER_VOLUME" \
+                  "$DOCKER_RPMBUILDER_IMAGE" \
+                  "$RPMBUILDER_PATH" \
+                  "$spec_name" \
+                  "$@"
+    else
+        dockerRun "$DOCKER_RPMBUILDER_IMAGE" \
+                  "$RPMBUILDER_PATH" \
+                  "$@"
+    fi
+
+    return $?
 }
 
-debugCommand() {
-  local img
-  local specpath
-  local specdir
-  local specname
-  local rpmb_img
-
-  img="${1}"
-  specpath="${2:-.}"
-  specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
-  specname=$(basename "$specpath")
-  shift 2
-
-  rpmb_img="${img}"
-
-  dockerRun -v "$specdir":/rpmbuilder \
-            "$rpmb_img" \
-            "/bin/bash"
-}
-
+# Unpacks source RPM to specified directory
+#
+# 1: Path to source RPM (String) [Optional]
+#
+# Code: Yes
+# Echo: No
 unpackCommand() {
-  local img
-  local srpmpath
-  local srpmdir
-  local srpmname
+    local srpm srpm_dir srpm_name
 
-  img="${1}"
-  srpmpath="${2}"
-  srpmdir="$(cd "$(dirname "$srpmpath")" && pwd -P)"
-  srpmname=$(basename "$srpmpath")
+    srpm="$1"
 
-  shift 2
+    if [[ -r "$srpm" ]] ; then
+        srpm_dir="$(cd "$(dirname "$srpm")" && pwd -P)"
+        srpm_name=$(basename "$srpm")
+    fi
 
-  local unrpmb_img
-  local unrpmb_args
+    if [[ -n "$srpm_dir" ]] ; then
+        shift 1
+        dockerRun -v "$srpm_dir":"$DOCKER_RPMBUILDER_VOLUME" \
+                  "$DOCKER_RPMBUILDER_IMAGE" \
+                  "$RPMUNBUILDER_PATH" \
+                  "$srpm_name" \
+                  "$@"
+    else
+        dockerRun "$DOCKER_RPMBUILDER_IMAGE" \
+                  "$RPMUNBUILDER_PATH" \
+                  "$@"
+    fi
 
-  unrpmb_img="${img}"
-  unrpmb_args="."
-
-  shift 2
-
-  dockerRun -v "$srpmdir":/rpmbuilder \
-            "$unrpmb_img" \
-            "/usr/bin/rpmunbuilder" \
-            "$srpmname" \
-            "$unrpmb_args"
+    return $?
 }
 
+# Executes shell inside container for debugging
+#
+# 1: Path to spec file (String) [Optional]
+#
+# Code: Yes
+# Echo: Yes
+debugCommand() {
+    local spec spec_dir spec_name
+
+    spec="$1"
+
+    if [[ -r "$spec" ]] ; then
+        spec_dir="$(cd "$(dirname "$spec")" && pwd -P)"
+    else
+        spec_dir="."
+    fi
+
+    dockerRun -v "$spec_dir":"$DOCKER_RPMBUILDER_VOLUME" \
+              "$DOCKER_RPMBUILDER_IMAGE" \
+              "$SHELL_PATH"
+
+    return $?
+}
+
+# Runs Perfecto linter
+#
+# 1: Path to spec file (String)
+#
+# Code: Yes
+# Echo: Yes
 checkCommand() {
-  local img
-  local specpath
-  local specdir
-  local specname
-  local perfecto_img
+    local spec spec_dir spec_name
 
-  img="${1}"
-  specpath="${2}"
-  specdir="$(cd "$(dirname "$specpath")" && pwd -P)"
-  specname=$(basename "$specpath")
-  shift 2
+    spec="$1"
 
-  perfecto_img="${img}"
+    if [[ -r "$spec" ]] ; then
+        spec_dir="$(cd "$(dirname "$spec")" && pwd -P)"
+        spec_name=$(basename "$spec")
+    fi
 
-  dockerRun -v "$specdir":/rpmbuilder \
-            "$perfecto_img" \
-            "/usr/bin/perfecto" \
-            "$specname" \
-            "$@"
+    if [[ -n "$spec_dir" ]] ; then
+        shift
+        docker run --rm -it -v "$spec_dir":"$DOCKER_PERFECTO_VOLUME" "$DOCKER_PERFECTO_IMAGE" "$spec_name" "$@"
+    else
+        docker run --rm -it "$DOCKER_PERFECTO_IMAGE" "$@"
+    fi
+
+    return $?
 }
 
+# Prints help menu
+#
+# 1: Command name (String)
+#
+# Code: Yes
+# Echo: Yes
 helpCommand() {
-  if [[ -z "$1" ]] ; then
-    usage
-    doExit
-  fi
-
-  case $1 in
-    "p"|"pack")              usagePack "$@" ;;
-    "u"|"unpack")            usageUnpack "$@" ;;
-    "c"|"check")             usageCheck "$@" ;;
-    "d"|"debug")             usageDebug "$@" ;;
-    "h"|"help")              usageHelp ;;
-    *) show "Unknown command ${CL_CYAN}$1${CL_NORM}." ;;
+  case "$1" in
+      "p"|"pack")
+          usagePack
+          ;;
+      "u"|"unpack")
+          usageUnpack
+          ;;
+      "c"|"check")
+          usageCheck
+          ;;
+      "d"|"debug")
+          usageDebug
+          ;;
+      "h"|"help")
+          usageHelp
+          ;;
+      *)
+          usage
+          ;;
   esac
+
+  doExit
+}
+
+# Run process
+#
+# *: Command with arguments (Array) [Optional]
+#
+# Code: Yes
+# Echo: Yes
+process() {
+    local cmd
+
+    cmd="$1"
+    shift
+
+    case $cmd in
+        "p"|"pack")
+            packCommand "$@"
+            ;;
+        "u"|"unpack")
+            unpackCommand "$@"
+            ;;
+        "c"|"check")
+            checkCommand "$@"
+            ;;
+        "d"|"debug")
+            debugCommand "$@"
+            ;;
+        *)
+            helpCommand "$@"
+            doExit
+            ;;
+    esac
+
+    doExit $?
 }
 
 ###############################################################################
