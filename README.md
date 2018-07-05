@@ -10,7 +10,7 @@ Dockerized RPM building tool for any platforms based on [RPMBuilder](https://git
 
 ## Requirements
 
-- Docker 1.11 or higher
+- Docker
 
 ## Getting started
 
@@ -21,12 +21,14 @@ sudo cp dkrpm /usr/local/bin/dkrpm
 sudo chmod +x /usr/local/bin/dkrpm
 ```
 
+Use environment variables `DOCKER_RPMBUILDER_IMAGE` and `DOCKER_PERFECTO_IMAGE` to specify custom images.
+
 ## Prebuilt images
 
 Feel free to use any of the following prebuilt images:
 
+- [gongled/rpmbuilder:7](https://hub.docker.com/r/gongled/rpmbuilder/) [default]
 - [gongled/rpmbuilder:6](https://hub.docker.com/r/gongled/rpmbuilder/)
-- [gongled/rpmbuilder:7](https://hub.docker.com/r/gongled/rpmbuilder/)
 
 Use Makefile target `all` to build example images from the source code:
 
@@ -54,7 +56,7 @@ _In case you need to setup custom YUM repository, please make changes to `Docker
 ## Usage
 
 ```
-Usage: dkrpm command image source <option>
+Usage: dkrpm command source <option>
 
 Commands:
 
@@ -68,10 +70,10 @@ See "dkrpm help <command>" for information on a specific command.
 
 Examples:
 
-  dkrpm pack rpmbuilder:6 htop.spec -V -1
-  dkrpm unpack rpmbuilder:7 htop-2.0.2-0.el7.src.rpm
-  dkrpm check rpmbuilder:6 htop.spec
-  dkrpm debug rpmbuilder:6 htop.spec
+  dkrpm pack htop.spec -V -1
+  dkrpm unpack htop-2.0.2-0.el7.src.rpm
+  dkrpm check htop.spec
+  dkrpm debug htop.spec
 ```
 
 ## ShellCheck Status
