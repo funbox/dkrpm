@@ -350,7 +350,7 @@ debugCommand() {
     if [[ -r "$spec" ]] ; then
         spec_dir="$(cd "$(dirname "$spec")" && pwd -P)"
     else
-        spec_dir="."
+        spec_dir="$(pwd)"
     fi
 
     dockerRun -v "$spec_dir":"$DOCKER_RPMBUILDER_VOLUME" \
