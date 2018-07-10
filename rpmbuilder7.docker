@@ -26,6 +26,8 @@ RUN curl -o /usr/local/bin/gosu -sSL "https://github.com/tianon/gosu/releases/do
     && chmod +x /usr/local/bin/gosu
 
 COPY SOURCES/rpmbuilder7/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY SOURCES/rpmbuilder7/rpmlint.conf /home/rpmbuilder/.config/rpmlint
+
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 VOLUME /rpmbuilder
