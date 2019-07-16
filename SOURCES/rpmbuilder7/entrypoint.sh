@@ -11,9 +11,10 @@ else
     USER_ID=9001
 fi
 
-useradd -s /bin/bash -u $USER_ID -m -d /home/rpmbuilder -m rpmbuilder
+useradd -s /bin/bash -u $USER_ID -m -d /home/rpmbuilder -m rpmbuilder 2>/dev/null
+cp -r /etc/skel/. /home/rpmbuilder/
 
-echo "rpmbuilder ALL=(root) NOPASSWD:/usr/bin/yum, /usr/bin/yum-builddep" > /etc/sudoers.d/rpmbuilder
+echo "rpmbuilder ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/rpmbuilder
 
 cat<<EOF >/home/rpmbuilder/.rpmmacros
 %_topdir             %(echo \$HOME)/rpmbuild
@@ -49,4 +50,4 @@ mkdir -p /home/rpmbuilder/rpmbuild/BUILD \
          /home/rpmbuilder/rpmbuild/SRPMS
 chown -R rpmbuilder:rpmbuilder /home/rpmbuilder /rpmbuilder
 
-exec /usr/local/bin/gosu rpmbuilder $RPMB_NAME "$@"
+exec /usr/local/bin/gosu rpmbuilder "$RPMB_NAME" "$@"
