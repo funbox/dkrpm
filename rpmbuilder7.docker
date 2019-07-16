@@ -12,7 +12,7 @@ ARG GOSU_VERSION=1.10
 
 ###############################################################################
 
-RUN yum -y -q https://yum.kaos.st/kaos-repo-latest.el7.noarch.rpm \
+RUN yum -y -q install https://yum.kaos.st/kaos-repo-latest.el7.noarch.rpm \
                    epel-release && \
     yum -y -q clean metadata && \
     yum -y -q update && \
