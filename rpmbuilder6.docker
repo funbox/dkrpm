@@ -1,19 +1,18 @@
-FROM centos:6.9
+FROM centos:6.10
 
 LABEL name="CentOS 6.x RPMBuilder Image" \
       license="MIT" \
       vendor="GONGLED" \
       maintainer="Gleb E Goncharov" \
-      build-date="2018-02-08"
+      build-date="2019-07-16"
 
 ###############################################################################
 
-ARG KAOS_REPO_VERSION=9.0-0
 ARG GOSU_VERSION=1.10
 
 ###############################################################################
 
-RUN yum -y -q install https://yum.kaos.io/6/release/i386/kaos-repo-$KAOS_REPO_VERSION.el6.noarch.rpm \
+RUN yum -y -q install https://yum.kaos.st/kaos-repo-latest.el6.noarch.rpm \
                    epel-release wget && \
     wget http://people.centos.org/tru/devtools-2/devtools-2.repo -O /etc/yum.repos.d/devtools-2.repo && \
     yum -y -q clean metadata && \

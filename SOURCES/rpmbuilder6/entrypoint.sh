@@ -13,7 +13,7 @@ fi
 useradd -s /bin/bash -u $USER_ID -m -d /home/rpmbuilder -m rpmbuilder 2>/dev/null
 cp -r /etc/skel/. /home/rpmbuilder/
 
-echo "rpmbuilder ALL=(root) NOPASSWD:/usr/bin/yum, /usr/bin/yum-builddep" > /etc/sudoers.d/rpmbuilder
+echo "rpmbuilder ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/rpmbuilder
 
 # Fix for docker/docker issue about /proc/self/fd/{0,1,2}
 # URL: https://github.com/docker/docker/issues/11462
@@ -27,4 +27,4 @@ mkdir -p /home/rpmbuilder/rpmbuild/BUILD \
          /home/rpmbuilder/rpmbuild/SRPMS
 chown -R rpmbuilder:rpmbuilder /home/rpmbuilder /rpmbuilder
 
-exec /usr/local/bin/gosu rpmbuilder $RPMB_NAME "$@"
+exec /usr/local/bin/gosu rpmbuilder "$RPMB_NAME" "$@"

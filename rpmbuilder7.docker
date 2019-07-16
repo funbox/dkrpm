@@ -4,16 +4,15 @@ LABEL name="CentOS 7.x RPMBuilder Image" \
       license="MIT" \
       vendor="GONGLED" \
       maintainer="Gleb E Goncharov" \
-      build-date="2018-02-08"
+      build-date="2019-07-16"
 
 ###############################################################################
 
-ARG KAOS_REPO_VERSION=9.0-0
 ARG GOSU_VERSION=1.10
 
 ###############################################################################
 
-RUN yum -y -q install https://yum.kaos.io/7/release/x86_64/kaos-repo-$KAOS_REPO_VERSION.el7.noarch.rpm \
+RUN yum -y -q https://yum.kaos.st/kaos-repo-latest.el7.noarch.rpm \
                    epel-release && \
     yum -y -q clean metadata && \
     yum -y -q update && \
