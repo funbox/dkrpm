@@ -12,6 +12,7 @@ fi
 
 # Run linter
 if [[ -x "$SHELLCHECK_PATH" ]] ; then
+    "$SHELLCHECK_PATH" --version
     "$SHELLCHECK_PATH" "$@"
 else
     echo
