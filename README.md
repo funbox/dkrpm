@@ -6,15 +6,15 @@ Shell wrapper for [RPMBuilder](https://github.com/essentialkaos/rpmbuilder).
 
 ## Requirements
 
-- Docker
+- [Docker](https://docker.com/)
+- [Make](https://www.gnu.org/software/make/manual/make.html)
 
-## Getting started
+## Installation
 
-Install `dkrpm` shell script to one of available `$PATH` directory.
+Install `dkrpm` shell script to the directory. Use `DESTDIR` parameter to override default path.
 
 ```shell
-sudo cp dkrpm /usr/local/bin/dkrpm
-sudo chmod +x /usr/local/bin/dkrpm
+sudo make install
 ```
 
 ## Environment variables

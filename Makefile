@@ -2,15 +2,18 @@
 
 .PHONY = all install uninstall test
 
+DESTDIR ?= /usr/local/bin
+
 ########################################################################################
 
 all: test
 
 install:
-	cp -f dkrpm /usr/bin/dkrpm
+	cp -f dkrpm $(DESTDIR)/dkrpm
+	chmod +x $(DESTDIR)/dkrpm
 
 uninstall:
-	rm -f /usr/bin/dkrpm
+	rm -f $(DESTDIR)/dkrpm
 
 test:
 	bash .linter/linter.sh dkrpm
