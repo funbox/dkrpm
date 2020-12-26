@@ -6,7 +6,15 @@ DESTDIR ?= /usr/local/bin
 
 ########################################################################################
 
+VERSION := 1.6.1
+BUMPVERSION_PART ?= patch
+
+########################################################################################
+
 all: test
+
+bump:
+	bump2version $(BUMPVERSION_PART)
 
 install:
 	cp -f dkrpm $(DESTDIR)/dkrpm
