@@ -2,7 +2,7 @@
 
 Shell wrapper for [RPMBuilder](https://github.com/essentialkaos/rpmbuilder).
 
-<p align="center"><a href="#demo">Demo</a> • <a href="#requirements">Requirements</a> • <a href="#getting-started">Getting started</a> • <a href="#usage">Usage</a> • <a href="#shellcheck-status">ShellCheck Status</a> • <a href="#credits">Credits</a> • <a href="#license">License</a></p>
+<p align="center"><a href="#demo">Demo</a> • <a href="#requirements">Requirements</a> • <a href="#getting-started">Getting started</a> • <a href="#environment-variables">Environment variables</a> • <a href="#usage">Usage</a> • <a href="#shellcheck-status">ShellCheck Status</a> • <a href="#credits">Credits</a> • <a href="#license">License</a></p>
 
 ## Requirements
 
@@ -19,8 +19,10 @@ sudo chmod +x /usr/local/bin/dkrpm
 
 ## Environment variables
 
-- `DOCKER_RPMBUILDER_IMAGE` sets up Docker image with [rpmbuilder](https://github.com/essentialkaos/rpmbuilder) (default `essentialkaos/rpmbuilder:centos7`)
-- `DOCKER_PERFECTO_IMAGE` sets up Docker image with [perfecto](https://github.com/essentialkaos/perfecto) (default `essentialkaos/perfecto:latest`)
+| Envvar | Status | Default |
+|------------|--------|--------|
+| `DOCKER_RPMBUILDER_IMAGE` | [RPMBuilder](https://github.com/essentialkaos/rpmbuilder) Docker image | `essentialkaos/rpmbuilder:centos7` |
+| `DOCKER_PERFECTO_IMAGE` | [Perfecto](https://github.com/essentialkaos/perfecto) Docker image | `essentialkaos/perfecto:centos7` |
 
 ## Usage
 
