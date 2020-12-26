@@ -62,7 +62,7 @@ RPMBUILDER_PATH="${RPMBUILDER_PATH:-/usr/bin/rpmbuilder}"
 RPMUNBUILDER_PATH="${RPMUNBUILDER_PATH:-/usr/bin/rpmunbuilder}"
 
 # Path to Docker image with RPMBuilder utility
-DOCKER_RPMBUILDER_IMAGE="${DOCKER_RPMBUILDER_IMAGE:-gongled/rpmbuilder:7}"
+DOCKER_RPMBUILDER_IMAGE="${DOCKER_RPMBUILDER_IMAGE:-essentialkaos/rpmbuilder:centos7}"
 
 # Shared volume inside container for RPMBuilder/RPMUnbuilder
 DOCKER_RPMBUILDER_VOLUME="/rpmbuilder"
