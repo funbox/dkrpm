@@ -17,7 +17,10 @@ sudo cp dkrpm /usr/local/bin/dkrpm
 sudo chmod +x /usr/local/bin/dkrpm
 ```
 
-Use environment variables `DOCKER_RPMBUILDER_IMAGE` and `DOCKER_PERFECTO_IMAGE` to specify custom images.
+## Environment variables
+
+- `DOCKER_RPMBUILDER_IMAGE` sets up Docker image with [rpmbuilder](https://github.com/essentialkaos/rpmbuilder) (default `essentialkaos/rpmbuilder:centos7`)
+- `DOCKER_PERFECTO_IMAGE` sets up Docker image with [perfecto](https://github.com/essentialkaos/perfecto) (default `essentialkaos/perfecto:latest`)
 
 ## Usage
 
