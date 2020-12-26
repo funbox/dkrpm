@@ -1,6 +1,6 @@
 # About
 
-Dockerized RPM building tool for any platforms based on [RPMBuilder](https://github.com/essentialkaos/rpmbuilder).
+Shell wrapper for [RPMBuilder](https://github.com/essentialkaos/rpmbuilder).
 
 <p align="center"><a href="#demo">Demo</a> • <a href="#requirements">Requirements</a> • <a href="#getting-started">Getting started</a> • <a href="#prebuilt-images">Prebuilt images</a> • <a href="#usage">Usage</a> • <a href="#shellcheck-status">ShellCheck Status</a> • <a href="#credits">Credits</a> • <a href="#license">License</a></p>
 
@@ -18,36 +18,6 @@ sudo chmod +x /usr/local/bin/dkrpm
 ```
 
 Use environment variables `DOCKER_RPMBUILDER_IMAGE` and `DOCKER_PERFECTO_IMAGE` to specify custom images.
-
-## Prebuilt images
-
-Feel free to use any of the following prebuilt images:
-
-- [gongled/rpmbuilder:7](https://hub.docker.com/r/gongled/rpmbuilder/) [default]
-- [gongled/rpmbuilder:6](https://hub.docker.com/r/gongled/rpmbuilder/)
-
-Use Makefile target `all` to build example images from the source code:
-
-```
-make all
-```
-
-#### Available repositories
-
-Docker images provide the following repositories by default.
-
-##### CentOS/RHEL 6
-
-- [EPEL](https://fedoraproject.org/wiki/EPEL)
-- [ESSENTIAL KAOS](https://github.com/essentialkaos/kaos-repo)
-- [Software Collections](https://linux.web.cern.ch/linux/other.shtml)
-
-##### CentOS/RHEL 7
-
-- [EPEL](https://fedoraproject.org/wiki/EPEL)
-- [ESSENTIAL KAOS](https://github.com/essentialkaos/kaos-repo)
-
-_In case you need to setup custom YUM repository, please make changes to `Dockerfile` and build your own image._
 
 ## Usage
 
@@ -76,8 +46,8 @@ Examples:
 
 | Branch | Status |
 |------------|--------|
-| `master` | [![Build Status](https://travis-ci.org/gongled/dkrpm.svg?branch=master)](https://travis-ci.org/gongled/dkrpm) |
-| `develop` | [![Build Status](https://travis-ci.org/gongled/dkrpm.svg?branch=develop)](https://travis-ci.org/gongled/dkrpm) |
+| `master` | [![Build Status](https://github.com/gongled/dkrpm/workflows/ci/badge.svg?branch=master)](https://github.com/gongled/dkrpm) |
+| `develop` | [![Build Status](https://github.com/gongled/dkrpm/workflows/ci/badge.svg?branch=develop)](https://github.com/gongled/dkrpm) |
 
 ## Credits
 
