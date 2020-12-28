@@ -1,8 +1,8 @@
-# About
+# dkrpm
 
 Shell wrapper for [RPMBuilder](https://github.com/essentialkaos/rpmbuilder).
 
-<p align="center"><a href="#demo">Demo</a> • <a href="#requirements">Requirements</a> • <a href="#getting-started">Getting started</a> • <a href="#environment-variables">Environment variables</a> • <a href="#usage">Usage</a> • <a href="#shellcheck-status">ShellCheck Status</a> • <a href="#credits">Credits</a> • <a href="#license">License</a></p>
+<p align="center"><a href="#requirements">Requirements</a> • <a href="#installation">Installation</a> • <a href="#environment-variables">Environment variables</a> • <a href="#usage">Usage</a> • <a href="#shellcheck-status">ShellCheck Status</a> • <a href="#credits">Credits</a> • <a href="#license">License</a></p>
 
 ## Requirements
 
@@ -19,7 +19,7 @@ sudo make install
 
 ## Environment variables
 
-| Envvar | Status | Default |
+| Env var | Status | Default |
 |------------|--------|--------|
 | `DOCKER_RPMBUILDER_IMAGE` | [RPMBuilder](https://github.com/essentialkaos/rpmbuilder) Docker image | `essentialkaos/rpmbuilder:centos7` |
 | `DOCKER_PERFECTO_IMAGE` | [Perfecto](https://github.com/essentialkaos/perfecto) Docker image | `essentialkaos/perfecto:centos7` |
@@ -51,8 +51,8 @@ Examples:
 
 | Branch | Status |
 |------------|--------|
-| `master` | [![Build Status](https://github.com/gongled/dkrpm/workflows/ci/badge.svg?branch=master)](https://github.com/gongled/dkrpm) |
-| `develop` | [![Build Status](https://github.com/gongled/dkrpm/workflows/ci/badge.svg?branch=develop)](https://github.com/gongled/dkrpm) |
+| `master` | [![Build Status](https://github.com/funbox/dkrpm/workflows/ci/badge.svg?branch=master)](https://github.com/funbox/dkrpm) |
+| `develop` | [![Build Status](https://github.com/funbox/dkrpm/workflows/ci/badge.svg?branch=develop)](https://github.com/funbox/dkrpm) |
 
 ## Credits
 
@@ -61,3 +61,5 @@ Examples:
 ## License
 
 MIT
+
+[![Sponsored by FunBox](https://funbox.ru/badges/sponsored_by_funbox_centered.svg)](https://funbox.ru)
