@@ -2,7 +2,11 @@
 
 Shell wrapper for [RPMBuilder](https://github.com/essentialkaos/rpmbuilder).
 
-<p align="center"><a href="#requirements">Requirements</a> • <a href="#installation">Installation</a> • <a href="#environment-variables">Environment variables</a> • <a href="#usage">Usage</a> • <a href="#shellcheck-status">ShellCheck Status</a> • <a href="#credits">Credits</a> • <a href="#license">License</a></p>
+<p align="center"><a href="#demo">Demo</a> • <p align="center"><a href="#requirements">Requirements</a> • <a href="#installation">Installation</a> • <a href="#environment-variables">Environment variables</a> • <a href="#usage">Usage</a> • <a href="#shellcheck-status">ShellCheck Status</a> • <a href="#credits">Credits</a> • <a href="#license">License</a></p>
+
+## Demo
+
+[![demo](demo.gif)](#usage)
 
 ## Requirements
 
